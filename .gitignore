@@ -1,0 +1,8 @@
+# All intellij files
+.idea/
+target/
+*.iml
+
+# Mac OSX Finder files
+.DS_Store
+

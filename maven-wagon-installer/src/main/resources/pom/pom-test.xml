@@ -1,0 +1,33 @@
+<project>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.company</groupId>
+    <artifactId>olp-wagon-test</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <repositories>
+        <repository>
+            <id>HERE_PLATFORM_ARTIFACT</id>
+            <layout>default</layout>
+            <url>here+artifact-service://artifact-service</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.example.wagon.installer</groupId>
+            <artifactId>testpackage</artifactId>
+            <version>1.0.0</version>
+            <type>zip</type>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <extensions>
+            <extension>
+                <groupId>com.here.platform.artifact</groupId>
+                <artifactId>artifact-wagon</artifactId>
+                <version>${artifact.wagon.version}</version>
+            </extension>
+        </extensions>
+    </build>
+</project>
