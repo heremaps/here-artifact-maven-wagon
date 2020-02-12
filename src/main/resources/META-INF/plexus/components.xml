@@ -1,0 +1,34 @@
+<component-set>
+    <components>
+        <!-- http component -->
+        <component>
+            <role>org.apache.maven.wagon.Wagon</role>
+            <role-hint>here+http</role-hint>
+            <implementation>com.here.platform.artifact.maven.wagon.ArtifactWagon</implementation>
+            <instantiation-strategy>per-lookup</instantiation-strategy>
+        </component>
+
+        <!-- https component -->
+        <component>
+            <role>org.apache.maven.wagon.Wagon</role>
+            <role-hint>here+https</role-hint>
+            <implementation>com.here.platform.artifact.maven.wagon.ArtifactWagon</implementation>
+            <instantiation-strategy>per-lookup</instantiation-strategy>
+        </component>
+
+        <!-- component for artifact service URL auto resolution -->
+        <component>
+            <role>org.apache.maven.wagon.Wagon</role>
+            <role-hint>here+artifact-service</role-hint>
+            <implementation>com.here.platform.artifact.maven.wagon.ArtifactWagon</implementation>
+            <instantiation-strategy>per-lookup</instantiation-strategy>
+        </component>
+
+        <component>
+            <role>org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout</role>
+            <role-hint>here</role-hint>
+            <implementation>com.here.platform.artifact.maven.wagon.layout.HereArtifactRepositoryLayout</implementation>
+            <instantiation-strategy>per-lookup</instantiation-strategy>
+        </component>
+    </components>
+</component-set>
