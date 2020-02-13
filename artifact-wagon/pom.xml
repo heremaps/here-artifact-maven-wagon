@@ -8,7 +8,7 @@
     <parent>
         <artifactId>maven-parent</artifactId>
         <groupId>com.here.platform.artifact</groupId>
-        <version>1.7.31</version>
+        <version>1.7.32-SNAPSHOT</version>
     </parent>
 
     <artifactId>artifact-wagon</artifactId>
