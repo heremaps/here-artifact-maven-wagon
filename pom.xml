@@ -6,7 +6,7 @@
 
     <groupId>com.here.platform.artifact</groupId>
     <artifactId>maven-parent</artifactId>
-    <version>1.7.23</version>
+    <version>1.7.24-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <parent>
@@ -34,7 +34,7 @@
 
     <scm>
         <connection>scm:git:ssh://gerrit.it.here.com:29418/pa-limerick/artifact/maven-wagon</connection>
-        <tag>Release-1.7.23</tag>
+        <tag>HEAD</tag>
     </scm>
     <distributionManagement>
         <repository>
