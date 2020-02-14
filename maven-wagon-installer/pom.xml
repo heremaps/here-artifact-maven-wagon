@@ -7,13 +7,13 @@
   <parent>
     <artifactId>maven-parent</artifactId>
     <groupId>com.here.platform.artifact</groupId>
-    <version>1.7.34</version>
+    <version>1.7.35-SNAPSHOT</version>
   </parent>
 
   <name>artifact-wagon-install</name>
   <artifactId>artifact-wagon-install</artifactId>
   <groupId>com.here.platform.artifact</groupId>
-  <version>1.7.34</version>
+  <version>1.7.35-SNAPSHOT</version>
 
     <scm>
         <developerConnection>scm:git:ssh://gerrit.it.here.com:29418/pa-limerick/artifact/maven-wagon-installer
