@@ -26,6 +26,6 @@ GIT_RELEASE_TAG=${GIT_RELEASE_TAG}
 EOF
 
 # TEMP
-git log
+git log -2
 git tag -n9
 cat environment.properties
