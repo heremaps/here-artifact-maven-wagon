@@ -1,2 +1,22 @@
 language: java
 jdk: openjdk8
+
+stages:
+  - test
+  - name: increment_version
+    if: branch = travis-test and type = push
+  - name: deploy
+    if: branch = travis-test and type = push
+  - name: push_to_git
+    if: branch = travis-test and type = push
+
+jobs:
+  include:
+    - stage: test
+      script: echo "Would have ran the tests"
+    - stage: increment_version
+      script: echo "Would have incremented the version"
+    - stage: deploy
+      script: echo "Would have deployed to Maven central"
+    - stage: push_to_git
+      script: echo "Would have pushed to GIT"
