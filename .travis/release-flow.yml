@@ -1,10 +1,5 @@
-script: echo "executing script"
-
-before_deploy: echo "before deploy"
-
-deploy:
-  provider: script
-  skip_cleanup: true
-  script: echo "about to deploy"
-
-after_deploy: echo "after deploy"
+script:
+  - .travis/test.sh
+  - .travis/prepare_release.sh
+  - .travis/deploy.sh
+  - .travis/push_to_github.sh
