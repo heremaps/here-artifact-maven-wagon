@@ -3,4 +3,4 @@ jdk: openjdk8
 
 import:
   - source: .travis/release-flow.yml
-    if: branch = master and type = push
+    if: branch = travis-test and type = push
