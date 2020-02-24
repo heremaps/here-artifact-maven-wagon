@@ -22,14 +22,3 @@ git config user.email "OLP_ENG_LIMERICK@here.com"
 
 git commit -m "[skip ci] Preparing for release $MAIN_VERSION"
 git tag -a "${GIT_RELEASE_TAG}" -m "Release $MAIN_VERSION from build $TRAVIS_BUILD_ID"
-
-# Export some variables
-cat > environment.properties << EOF
-MAIN_VERSION=${MAIN_VERSION}
-GIT_RELEASE_TAG=${GIT_RELEASE_TAG}
-EOF
-
-# TEMP
-git log -2
-git tag -n9
-cat environment.properties
