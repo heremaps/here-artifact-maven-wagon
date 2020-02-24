@@ -29,3 +29,7 @@ EOF
 git log -2
 git tag -n9
 cat environment.properties
+echo $TRAVIS_BUILD_ID
+echo $TRAVIS_BUILD_WEB_URL
+echo $TRAVIS_JOB_ID
+echo TRAVIS_JOB_WEB_URL
