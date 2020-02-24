@@ -1,0 +1,10 @@
+script: echo "executing script"
+
+before_deploy: echo "before deploy"
+
+deploy:
+  provider: script
+  skip_cleanup: true
+  script: echo "about to deploy"
+
+after_deploy: echo "after deploy"
