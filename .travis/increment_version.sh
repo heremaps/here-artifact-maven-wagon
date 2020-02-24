@@ -21,7 +21,7 @@ NEXT_VERSION=$(mvn -q \
 sed -i "s/<tag>.*<\/tag>/<tag>HEAD<\/tag>/g" pom.xml
 find . -name "pom.xml" -not -path "./maven-wagon-installer/src/*" -not -path "./maven-wagon-installer/target/*" \
   | xargs git add
-git commit -m "Updating to ${NEXT_VERSION}-SNAPSHOT after releasing $MAIN_VERSION"
+git commit -m "[skip ci] Updating to ${NEXT_VERSION}-SNAPSHOT after releasing $MAIN_VERSION"
 
 # Output environment variables
 cat >> environment.properties << EOF
