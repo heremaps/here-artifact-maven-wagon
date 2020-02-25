@@ -17,6 +17,7 @@
     <organization>
         <name>HERE Technologies</name>
     </organization>
+
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
@@ -26,9 +27,11 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:ssh://gerrit.it.here.com:29418/pa-limerick/artifact/maven-wagon</connection>
-        <tag>HEAD</tag>
+        <connection>scm:git:https://github.com/heremaps/here-artifact-maven-wagon.git</connection>
+        <developerConnection>scm:git:git@github.com:heremaps/here-artifact-maven-wagon.git</developerConnection>
+        <url>https://github.com/heremaps/here-artifact-maven-wagon</url>
     </scm>
+
     <distributionManagement>
         <repository>
             <id>here-olp-sit</id>
