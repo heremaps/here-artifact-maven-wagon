@@ -1,6 +1,5 @@
 script:
   - .travis/test.sh
   - .travis/prepare_release.sh
-  - .travis/deploy.sh
   - .travis/increment_version.sh
-  - .travis/push_to_github.sh
+  - .travis/deploy.sh
