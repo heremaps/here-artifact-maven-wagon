@@ -43,6 +43,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.here.platform.artifact.maven.wagon.model.RegisterResponse;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -139,6 +140,7 @@ public class ArtifactWagonTest {
         "https://artifact.api.platform.here.com/v1/artifact",
         artifactWagon.getURL(
             new Repository("here-artifact", "here+artifact-service://artifact-service")));
+    fail();
   }
 
   @Test
