@@ -32,4 +32,4 @@ git push origin-travis HEAD:${TRAVIS_BRANCH}
 git push origin-travis "${GIT_RELEASE_TAG}"
 
 # Reset to previous commit for release
-git reset --hard HEAD^
+git reset --hard "${GIT_RELEASE_TAG}"
