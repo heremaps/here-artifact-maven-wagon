@@ -1,7 +1,6 @@
 #!/bin/bash
 set -ev
 
-echo "Incrementing version"
 # Increment version and push to remote before releasing to Maven Central to eliminame multiple commit race conditions
 # If push to removte fails - this means that we are not at the latest commit anymore and should abort
 RELEASE_VERSION=$(mvn -q \
@@ -25,7 +24,7 @@ find . -name "pom.xml" -not -path "./maven-wagon-installer/src/*" -not -path "./
   | xargs git add
 git commit -m "[skip ci] Updating to ${NEXT_VERSION}-SNAPSHOT after releasing $RELEASE_VERSION"
 
-echo "Pushing to GitHub"
+# Push to GitHub
 GIT_RELEASE_TAG=$(git describe --abbrev=0)
 
 git remote add origin-travis https://${GITHUB_TOKEN}@${GITHUB_REPO}

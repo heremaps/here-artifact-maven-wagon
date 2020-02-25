@@ -1,7 +1,7 @@
 #!/bin/bash
 set -ev
 
-echo "Preparing release"
+# Prepare release
 mvn -B -q build-helper:parse-version versions:set \
   -DnewVersion=\${parsedVersion.majorVersion}.\${parsedVersion.minorVersion}.\${parsedVersion.incrementalVersion} \
   versions:commit
