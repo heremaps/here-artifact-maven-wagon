@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/heremaps/here-artifact-maven-wagon.svg?token=qChpbefwyQKBzgjbCQ4s&branch=master)](https://travis-ci.com/heremaps/here-artifact-maven-wagon)
+
 # HERE platform Maven Wagon plugin
 
 ##  Introduction

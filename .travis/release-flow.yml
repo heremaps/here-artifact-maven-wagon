@@ -1,0 +1,6 @@
+script:
+  - set -e
+  - .travis/test.sh
+  - .travis/prepare_release.sh
+  - .travis/increment_version.sh
+  - .travis/deploy.sh
