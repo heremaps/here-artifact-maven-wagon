@@ -20,8 +20,7 @@ NEXT_VERSION=$(mvn -q \
     exec:exec)
 
 sed -i "s/<tag>.*<\/tag>/<tag>HEAD<\/tag>/g" pom.xml
-find . -name "pom.xml" -not -path "./maven-wagon-installer/src/*" -not -path "./maven-wagon-installer/target/*" \
-  | xargs git add
+find . -name "pom.xml" | xargs git add
 git commit -m "[skip ci] Updating to ${NEXT_VERSION}-SNAPSHOT after releasing $RELEASE_VERSION"
 
 # Push to GitHub

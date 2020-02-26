@@ -14,8 +14,7 @@ RELEASE_VERSION=$(mvn -q \
 GIT_RELEASE_TAG="Release-${RELEASE_VERSION}"
 
 sed -i "s/<tag>.*<\/tag>/<tag>${GIT_RELEASE_TAG}<\/tag>/g" pom.xml
-find . -name "pom.xml" -not -path "./maven-wagon-installer/src/*" -not -path "./maven-wagon-installer/target/*" \
-  | xargs git add
+find . -name "pom.xml" | xargs git add
 
 git config user.name "Travis CI"
 git config user.email "OLP_ENG_LIMERICK@here.com"
