@@ -31,8 +31,7 @@ import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 /**
- * Based on {@link
- * org.eclipse.aether.internal.impl.Maven2RepositoryLayoutFactory.Maven2RepositoryLayout}
+ * Based on {@link org.eclipse.aether.internal.impl.Maven2RepositoryLayoutFactory} Maven2RepositoryLayout.
  *
  * <p>This layout attempts to make URLs that look like: {groupId}/{artifact}/{version}/{file} for
  * easy translation into HRN format within the wagon provider.
