@@ -78,6 +78,6 @@ To access libraries and schemas from HERE platform, you need a HERE Workspace an
 You need to get install credentials and prepare your environment. Workspace users find corresponding guidance [in the documentation for Java and Scala developers]( https://developer.here.com/olp/documentation/sdk-developer-guide/dev_guide/topics/how-to-use-sdk.html). Marketplace user find instructions [in the Marketplace Consumer user guide](https://developer.here.com/olp/documentation/marketplace-consumer/user-guide/topics/data.html#register-app).
 
 ## License
-Copyright (C) 2017-2020 HERE Europe B.V.
+Copyright (C) 2018-2020 HERE Europe B.V.
 
 Unless otherwise noted in `LICENSE` files for specific files or directories, the [LICENSE](LICENSE) in the root applies to all content in this repository.

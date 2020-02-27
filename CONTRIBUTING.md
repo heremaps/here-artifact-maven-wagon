@@ -27,7 +27,7 @@ Code styles conventions :
 - the Java class should have **Copyright Notice**:
 ```text
 /*
- * Copyright (C) 2015-2019 HERE Europe B.V.
+ * Copyright (C) 2018-2020 HERE Europe B.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,3 +51,26 @@ Code styles conventions :
 - it is recommended to use [Google Java Format](https://github.com/google/google-java-format) without any single change to it.
 For this purpose configure your IDE with the plugin and enable it.
 When enabled, it will replace the normal `Reformat Code` action, which can be triggered from the `Code` menu or with the `Ctrl-Alt-L` (by default) keyboard shortcut.
+
+# Signing each Commit
+
+As part of filing a pull request we ask you to sign off the
+[Developer Certificate of Origin](https://developercertificate.org/) (DCO) in each commit.
+Any Pull Request with commits that are not signed off will be reject by the
+[DCO check](https://probot.github.io/apps/dco/).
+
+A DCO is lightweight way for a contributor to confirm that you wrote or otherwise have the right
+to submit code or documentation to a project. Simply add `Signed-off-by` as shown in the example below
+to indicate that you agree with the DCO.
+
+An example signed commit message:
+
+```
+    README.md: Fix minor spelling mistake
+
+    Signed-off-by: John Doe <john.doe@example.com>
+```
+
+Git has the `-s` flag that can sign a commit for you, see example below:
+
+`$ git commit -s -m 'README.md: Fix minor spelling mistake'`
