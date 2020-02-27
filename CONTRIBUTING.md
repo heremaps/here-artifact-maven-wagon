@@ -1,17 +1,33 @@
-# Artifact Service
+# Contributing Guide
 
 ## Introduction
 
-`Artifact Wagon` is Maven project with standard directory layout:
+`Artifact Wagon` is Maven java project with standard directory layout:
 - src/main/java
 - src/main/resources
 - src/test/java
 
+## Build
+
+The project uses [Maven](https://maven.apache.org/) build system and build instructions are stored 
+in [pom.xml](./pom.xml). Please [download](https://maven.apache.org/download.cgi) and 
+[install](https://maven.apache.org/install.html) Maven before running any instruction below.
+
+In order to compile the source code run:
+```bash
+mvn compile
+```
+
+The build jar can be found in `target` folder.
+
 ## Tests
 
-For testing purpose *Junit* and *Mockito* are used for unit-tests.
-Modules contain unit tests under path `/src/test/java`.
-`maven-surefire-plugin` is used for running unit tests and generating reports for tests. To run unit tests use next commands:
+[Junit](https://junit.org) and [Mockito](https://site.mockito.org/) are used for unit-tests.
+
+Modules contain unit tests under path `/src/test/java`. `maven-surefire-plugin` is used for running unit 
+tests and generating reports.
+
+To run unit tests use next commands:
 
 - `mvn test` to run all tests
 - `mvn -Dtest=ClassTest test` to run separate test-class
@@ -52,7 +68,7 @@ Code styles conventions :
 For this purpose configure your IDE with the plugin and enable it.
 When enabled, it will replace the normal `Reformat Code` action, which can be triggered from the `Code` menu or with the `Ctrl-Alt-L` (by default) keyboard shortcut.
 
-# Signing each Commit
+# Commit Signing
 
 As part of filing a pull request we ask you to sign off the
 [Developer Certificate of Origin](https://developercertificate.org/) (DCO) in each commit.
