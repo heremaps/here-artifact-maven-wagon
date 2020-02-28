@@ -71,8 +71,8 @@ import com.here.platform.artifact.maven.wagon.model.RegisterResponse;
 import com.here.platform.artifact.maven.wagon.model.ServiceExceptionResponse;
 import com.here.platform.artifact.maven.wagon.resolver.ArtifactWagonPropertiesResolver;
 
-import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static com.here.platform.artifact.maven.wagon.util.StringUtils.defaultIfEmpty;
+import static com.here.platform.artifact.maven.wagon.util.StringUtils.isEmpty;
 
 /**
  * Wagon provider with two main responsibilities:
@@ -85,6 +85,9 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
  */
 @Component(role = Wagon.class)
 public class ArtifactWagon extends AbstractHttpClientWagon {
+
+  private static final int OAUTH_REQUEST_TIMEOUT_IN_MS = 20000;
+  private static final int OAUTH_CONNECTION_TIMEOUT_IN_MS = 20000;
 
   private static final String AUTHORIZATION_FORBIDDEN_ERROR_MESSAGE =
       "The resource may already exist "
@@ -147,10 +150,10 @@ public class ArtifactWagon extends AbstractHttpClientWagon {
           properties = new Properties();
           properties.putAll(this.hereProperties);
 
-          if (isNotEmpty(getAuthenticationInfo().getUserName())) {
+          if (!isEmpty(getAuthenticationInfo().getUserName())) {
             properties.setProperty(HERE_ACCESS_ID_KEY, getAuthenticationInfo().getUserName());
           }
-          if (isNotEmpty(getAuthenticationInfo().getPassword())) {
+          if (!isEmpty(getAuthenticationInfo().getPassword())) {
             properties.setProperty(HERE_ACCESS_SECRET_KEY, getAuthenticationInfo().getPassword());
           }
         }
@@ -424,14 +427,14 @@ public class ArtifactWagon extends AbstractHttpClientWagon {
     // check for credentials file
     File file;
     String systemPropertyFile = System.getProperty(HERE_CREDENTIALS_PROPERTY);
-    if (isNotEmpty(systemPropertyFile)) {
+    if (!isEmpty(systemPropertyFile)) {
       LOG.debug(
           "Found property file value at System Property {}: {}",
           HERE_CREDENTIALS_PROPERTY,
           systemPropertyFile);
     } else {
       systemPropertyFile = System.getenv(HERE_CREDENTIALS_ENV);
-      if (isNotEmpty(systemPropertyFile)) {
+      if (!isEmpty(systemPropertyFile)) {
         LOG.debug(
             "Found property file at Environment Property {}: {}",
             HERE_CREDENTIALS_ENV,
@@ -439,7 +442,7 @@ public class ArtifactWagon extends AbstractHttpClientWagon {
       }
     }
 
-    if (isNotEmpty(systemPropertyFile)) {
+    if (!isEmpty(systemPropertyFile)) {
       file = new File(systemPropertyFile);
     } else {
       file = new File(System.getProperty("user.home"), HERE_CREDENTIALS_PATH);
@@ -471,8 +474,8 @@ public class ArtifactWagon extends AbstractHttpClientWagon {
     // default configuration
     RequestConfig.Builder requestConfigBuilder =
         RequestConfig.custom()
-            .setConnectTimeout(HttpConstants.DEFAULT_CONNECTION_TIMEOUT_IN_MS)
-            .setConnectionRequestTimeout(HttpConstants.DEFAULT_REQUEST_TIMEOUT_IN_MS);
+            .setConnectTimeout(OAUTH_CONNECTION_TIMEOUT_IN_MS)
+            .setConnectionRequestTimeout(OAUTH_REQUEST_TIMEOUT_IN_MS);
 
     // push in proxy information to the underlying http client
     CredentialsProvider credentialsProvider = null;
@@ -481,7 +484,7 @@ public class ArtifactWagon extends AbstractHttpClientWagon {
     if (proxyInfo != null) {
       LOG.debug("Found proxy information: {}:{}", proxyInfo.getHost(), proxyInfo.getPort());
       requestConfigBuilder.setProxy(new HttpHost(proxyInfo.getHost(), proxyInfo.getPort()));
-      if (isNotEmpty(proxyInfo.getUserName())) {
+      if (!isEmpty(proxyInfo.getUserName())) {
         LOG.debug("Found proxy security: {}", proxyInfo.getUserName());
         credentialsProvider = new BasicCredentialsProvider();
         credentialsProvider.setCredentials(

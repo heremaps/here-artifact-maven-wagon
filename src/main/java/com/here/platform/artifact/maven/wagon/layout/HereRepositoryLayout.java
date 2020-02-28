@@ -27,8 +27,8 @@ import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.metadata.Metadata;
 import org.eclipse.aether.spi.connector.layout.RepositoryLayout;
 
-import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static com.here.platform.artifact.maven.wagon.util.StringUtils.defaultIfEmpty;
+import static com.here.platform.artifact.maven.wagon.util.StringUtils.isEmpty;
 
 /**
  * Based on {@link org.eclipse.aether.internal.impl.Maven2RepositoryLayoutFactory} Maven2RepositoryLayout.
@@ -52,11 +52,11 @@ public class HereRepositoryLayout implements RepositoryLayout {
     path.append(artifact.getBaseVersion()).append(PATH_SEPARATOR);
 
     path.append(artifact.getArtifactId()).append(ARTIFACT_SEPARATOR).append(artifact.getVersion());
-    if (isNotEmpty(artifact.getClassifier())) {
+    if (!isEmpty(artifact.getClassifier())) {
       path.append(ARTIFACT_SEPARATOR).append(artifact.getClassifier());
     }
 
-    if (isNotEmpty(artifact.getExtension())) {
+    if (!isEmpty(artifact.getExtension())) {
       path.append(EXTENSION_SEPARATOR).append(artifact.getExtension());
     }
 

@@ -25,7 +25,7 @@ import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
 import org.codehaus.plexus.component.annotations.Component;
 
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static com.here.platform.artifact.maven.wagon.util.StringUtils.isEmpty;
 
 @Component(role = ArtifactRepositoryLayout.class, hint = "here")
 public class HereArtifactRepositoryLayout extends DefaultRepositoryLayout {
@@ -55,7 +55,7 @@ public class HereArtifactRepositoryLayout extends DefaultRepositoryLayout {
       path.append(ARTIFACT_SEPARATOR).append(artifact.getClassifier());
     }
 
-    if (isNotEmpty(artifactHandler.getExtension())) {
+    if (!isEmpty(artifactHandler.getExtension())) {
       path.append(GROUP_SEPARATOR).append(artifactHandler.getExtension());
     }
 
