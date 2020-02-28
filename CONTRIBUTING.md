@@ -90,3 +90,8 @@ An example signed commit message:
 Git has the `-s` flag that can sign a commit for you, see example below:
 
 `$ git commit -s -m 'README.md: Fix minor spelling mistake'`
+
+# Travis CI
+All opened pull request are being tested by Travis CI before they can be merged to the target branch.
+After the new code is pushed to `master` Travis will run the test suite again, build the artifacts and release them
+to Maven Central repository. The job will automatically increase Artifact Wagon patch version during this process.
