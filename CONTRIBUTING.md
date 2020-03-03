@@ -1,17 +1,33 @@
-# Artifact Service
+# Contributing Guide
 
 ## Introduction
 
-`Artifact Wagon` is Maven project with standard directory layout:
+`Artifact Wagon` is Maven java project with standard directory layout:
 - src/main/java
 - src/main/resources
 - src/test/java
 
+## Build
+
+The project uses [Maven](https://maven.apache.org/) build system and build instructions are stored 
+in [pom.xml](./pom.xml). Please [download](https://maven.apache.org/download.cgi) and 
+[install](https://maven.apache.org/install.html) Maven before running any instruction below.
+
+In order to compile the source code run:
+```bash
+mvn compile
+```
+
+The build jar can be found in `target` folder.
+
 ## Tests
 
-For testing purpose *Junit* and *Mockito* are used for unit-tests.
-Modules contain unit tests under path `/src/test/java`.
-`maven-surefire-plugin` is used for running unit tests and generating reports for tests. To run unit tests use next commands:
+[Junit](https://junit.org) and [Mockito](https://site.mockito.org/) are used for unit-tests.
+
+Modules contain unit tests under path `/src/test/java`. `maven-surefire-plugin` is used for running unit 
+tests and generating reports.
+
+To run unit tests use next commands:
 
 - `mvn test` to run all tests
 - `mvn -Dtest=ClassTest test` to run separate test-class
@@ -27,7 +43,7 @@ Code styles conventions :
 - the Java class should have **Copyright Notice**:
 ```text
 /*
- * Copyright (C) 2015-2019 HERE Europe B.V.
+ * Copyright (C) 2018-2020 HERE Europe B.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,3 +67,31 @@ Code styles conventions :
 - it is recommended to use [Google Java Format](https://github.com/google/google-java-format) without any single change to it.
 For this purpose configure your IDE with the plugin and enable it.
 When enabled, it will replace the normal `Reformat Code` action, which can be triggered from the `Code` menu or with the `Ctrl-Alt-L` (by default) keyboard shortcut.
+
+# Commit Signing
+
+As part of filing a pull request we ask you to sign off the
+[Developer Certificate of Origin](https://developercertificate.org/) (DCO) in each commit.
+Any Pull Request with commits that are not signed off will be reject by the
+[DCO check](https://probot.github.io/apps/dco/).
+
+A DCO is lightweight way for a contributor to confirm that you wrote or otherwise have the right
+to submit code or documentation to a project. Simply add `Signed-off-by` as shown in the example below
+to indicate that you agree with the DCO.
+
+An example signed commit message:
+
+```
+    README.md: Fix minor spelling mistake
+
+    Signed-off-by: John Doe <john.doe@example.com>
+```
+
+Git has the `-s` flag that can sign a commit for you, see example below:
+
+`$ git commit -s -m 'README.md: Fix minor spelling mistake'`
+
+# Travis CI
+All opened pull request are being tested by Travis CI before they can be merged to the target branch.
+After the new code is pushed to `master` Travis will run the test suite again, build the artifacts and release them
+to Maven Central repository. The job will automatically increase Artifact Wagon patch version during this process.

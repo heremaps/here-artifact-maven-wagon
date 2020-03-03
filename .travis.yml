@@ -1,2 +1,9 @@
 language: java
 jdk: openjdk8
+import:
+- source: ".travis/release-flow.yml"
+  if: branch = master and type = push
+env:
+  global:
+    - GITHUB_REPO="github.com/heremaps/here-artifact-maven-wagon.git"
+    - secure: it3FMaf72UNJ91sVlGJ3wRMwIGm4I6Tz3VzGKOrwbhkUgZpAvAClK8b3rb/4JtIlJ9y6U4nYvhfTS7v9F+Gc6/hjTawng+lhYHrFCFHE8ZaJT9NBqqAUJ09FY+Zp1Tz8Jj13QyKGQihscri+C1XOjuEZ33xUfqqr3WBlpJC+bqkdTGaM0h0PLpyUqlSDv83NrUzD7fUn7h4OIh+j08NAWa4FsNUs2VeKCSObvB6Gjsqof3OFTPrXF9BF0b0sWvdIU0u5MP4hF66HpvGqj0aSpQN+qyTXAgTUbb+ud/oBLDk5D8u5xcj153uSy3L/pXgp+YbXLzhTr8ZuhXRwPOlm1kXl0qnZShP7y9SZiGVQMCmwcoeALRxtfpOn/WUC+ea7oUHGbdukmStxe+yLZpqE5E2dxz76gClsxkcePmqig7qpS91Q9bz4KZhFzEVp8lIuOLUtDtPRc0Ib5vCrkCiHAhhVwxgJ640jMJ1QE7B7c05zuiD9i5OS9vcuUn6GtMxfRTU0+kZ24H4cxY9lGMfHL1YNNPEHiJ89ozgrI4MBsbmzp8T0CRmgrGw7UYT6c1KUDme2wOY0TE5wP7g9nKKl5rO8o8d8pua9anZ129py0oHxy7CKDlqeIuUaGYSCfKfbr3BWKQshjec24gwzeA+4vYgKyLFPYiG+U0FT+TtTmok=
