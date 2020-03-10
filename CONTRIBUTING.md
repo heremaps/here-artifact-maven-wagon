@@ -13,9 +13,9 @@ The project uses [Maven](https://maven.apache.org/) build system and build instr
 in [pom.xml](./pom.xml). Please [download](https://maven.apache.org/download.cgi) and 
 [install](https://maven.apache.org/install.html) Maven before running any instruction below.
 
-In order to compile the source code run:
+In order to compile and package the source code run:
 ```bash
-mvn compile
+mvn package
 ```
 
 The build jar can be found in `target` folder.
