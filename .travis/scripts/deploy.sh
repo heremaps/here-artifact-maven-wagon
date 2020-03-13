@@ -1,7 +1,7 @@
 #!/bin/bash
 set -ev
 
+# Import gpg key
+gpg --fast-import .travis/codesigning.asc
 # Deploy to Maven Central
-
-# Uncomment the line below when ready
-# mvn --settings .travis/travis-settings.xml clean deploy -Prelease
+mvn --settings .travis/travis-settings.xml clean deploy -Prelease
