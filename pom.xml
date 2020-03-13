@@ -13,7 +13,7 @@
 
     <groupId>com.here.platform.artifact</groupId>
     <artifactId>artifact-wagon</artifactId>
-    <version>1.7.53</version>
+    <version>1.7.54-SNAPSHOT</version>
 
     <name>HERE platform Maven Wagon</name>
     <description>
