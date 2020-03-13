@@ -2,7 +2,7 @@ language: java
 jdk: openjdk8
 import:
 - source: ".travis/release-flow.yml"
-  if: branch = master and type = push
+  if: branch = codesigning and type = push
 env:
   global:
   - GITHUB_REPO="github.com/heremaps/here-artifact-maven-wagon.git"
