@@ -2,5 +2,4 @@ script:
   - set -e
   - .travis/scripts/test.sh
   - .travis/scripts/prepare_release.sh
-  - .travis/scripts/increment_version.sh
   - .travis/scripts/deploy.sh
