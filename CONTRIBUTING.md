@@ -2,7 +2,7 @@
 
 ## Introduction
 
-`Artifact Wagon` is Maven java project with standard directory layout:
+`Artifact Wagon` is Maven Java project with standard directory layout:
 - src/main/java
 - src/main/resources
 - src/test/java
