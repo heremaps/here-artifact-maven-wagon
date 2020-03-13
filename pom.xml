@@ -14,7 +14,7 @@
     <groupId>com.here.platform.artifact</groupId>
     <artifactId>artifact-wagon</artifactId>
 
-    <!-- Artifact Wagon version is controller by Travis CI -->
+    <!-- Artifact Wagon version is controlled by Travis CI -->
     <!-- Please do not change this value -->
     <version>2.0.0-SNAPSHOT</version>
 
