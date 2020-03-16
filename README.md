@@ -17,7 +17,7 @@ To access libraries and schemas from the HERE platform, you need a HERE Workspac
 Once you have enabled your account you need to create the credentials and prepare your environment. Workspace users can find corresponding guidance [in the documentation for Java and Scala developers]( https://developer.here.com/olp/documentation/sdk-developer-guide/dev_guide/topics/how-to-use-sdk.html). Marketplace users can find instructions [in the Marketplace Consumer user guide](https://developer.here.com/olp/documentation/marketplace-consumer/user-guide/topics/get_catalog_data.html#register-app).
 
 ## How to use it?
-This Maven Wagon plugin is published on Maven Central so you can conveniently use it from your Maven POM.
+This Maven Wagon plugin is published on [Maven Central](https://search.maven.org/artifact/com.here.platform.artifact/artifact-wagon) so you can conveniently use it from your Maven POM.
 
 For example, to fetch the HERE Map Content - Topology Geometry - Protocol Buffers schema and the relative Java and Scala bindings set the following dependencies:
 
