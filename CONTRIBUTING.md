@@ -95,3 +95,5 @@ Git has the `-s` flag that can sign a commit for you, see example below:
 All opened pull request are being tested by Travis CI before they can be merged to the target branch.
 After the new code is pushed to `master` Travis will run the test suite again, build the artifacts and release them
 to Maven Central repository. The job will automatically increase Artifact Wagon patch version during this process.
+If you don't want your changes to trigger the release - you can add the `[skip release]` flag to your commit message,
+e.g., `git commit -s -m "[skip release] Fixed proxy configuration"`.
