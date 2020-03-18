@@ -43,6 +43,15 @@ For example, to fetch the HERE Map Content - Topology Geometry - Protocol Buffer
   </dependency>
 </dependencies>
 
+<repositories>
+  <!-- The reference to the HERE repository with schemas -->
+  <repository>
+    <id>HERE_PLATFORM_ARTIFACT</id>
+    <layout>default</layout>
+    <url>here+artifact-service://artifact-service</url>
+  </repository>
+</repositories>
+
 <build>
   <extensions>
     <extension>
@@ -65,6 +74,15 @@ As a Marketplace user you can add this dependency for fetching the Java / Scala 
   </dependency>
 </dependencies>
 
+<repositories>
+  <!-- The reference to the HERE repository with schemas -->
+  <repository>
+    <id>HERE_PLATFORM_ARTIFACT</id>
+    <layout>default</layout>
+    <url>here+artifact-service://artifact-service</url>
+  </repository>
+</repositories>
+
 <build>
   <extensions>
     <extension>
@@ -74,6 +92,44 @@ As a Marketplace user you can add this dependency for fetching the Java / Scala 
     </extension>
   </extensions>
 </build>
+```
+
+#### Proxy Setup
+To enable Maven and the HERE Maven Wagon Plugin to work behind a corporate proxy, you need to add the following proxy
+settings in the Maven settings file (`settings.xml`), which is normally located at `~/.m2/settings.xml`:
+
+```xml
+<settings>
+  <proxies>
+    <proxy>
+      <id>proxy1</id>
+      <active>true</active>
+      <protocol>https</protocol>
+      <host>{enter your proxy host here}</host>
+      <port>{enter your proxy port here}</port>
+      <username>{enter your proxy username here}</username>
+      <password>{enter your proxy password here}</password>
+    </proxy>
+    <proxy>
+      <id>proxy2</id>
+      <active>true</active>
+      <protocol>here+https</protocol>
+      <host>{enter your proxy host here}</host>
+      <port>{enter your proxy port here}</port>
+      <username>{enter your proxy username here}</username>
+      <password>{enter your proxy password here}</password>
+    </proxy>
+    <proxy>
+      <id>proxy3</id>
+      <active>true</active>
+      <protocol>here+artifact-service</protocol>
+      <host>{enter your proxy host here}</host>
+      <port>{enter your proxy port here}</port>
+      <username>{enter your proxy username here}</username>
+      <password>{enter your proxy password here}</password>
+    </proxy>
+  </proxies>
+</settings>
 ```
 
 ## License
