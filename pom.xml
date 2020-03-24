@@ -14,7 +14,7 @@
     <groupId>com.here.platform.artifact</groupId>
     <artifactId>artifact-wagon</artifactId>
 
-    <!-- Artifact Wagon version is controlled by Travis CI -->
+    <!--  The version of Artifact Wagon is updated by Travis CI -->
     <!-- Please do not change this value -->
     <version>2.0.0-SNAPSHOT</version>
 
@@ -26,7 +26,7 @@
 
     <inceptionYear>2018</inceptionYear>
     <organization>
-        <name>HERE Technologies</name>
+        <name>HERE Europe B.V.</name>
     </organization>
 
     <licenses>
@@ -39,8 +39,8 @@
 
     <developers>
         <developer>
-            <name>Dmitry Abramov</name>
-            <email>dmitriy.abramov@here.com</email>
+            <name>HERE Artifact Service Team</name>
+            <email>ARTIFACT_SERVICE_SUPPORT@here.com</email>
             <organization>HERE Europe B.V.</organization>
             <organizationUrl>https://github.com/heremaps</organizationUrl>
         </developer>
