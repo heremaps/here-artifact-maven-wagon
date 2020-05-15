@@ -23,7 +23,7 @@ RELEASE_TAG=$(mvn -q \
     exec:exec)
 
 git config user.name "Travis CI"
-git config user.email "OLP_ENG_LIMERICK@here.com"
+git config user.email "ARTIFACT_SERVICE_SUPPORT@here.com"
 
 git tag -a "${RELEASE_TAG}" -m "Release $RELEASE_TAG from build $TRAVIS_BUILD_ID"
 
