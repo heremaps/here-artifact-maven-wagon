@@ -60,7 +60,7 @@ Code styles conventions :
  * License-Filename: LICENSE
  */
 ```
-replace the <x> and <y> with numbers to denote the years in which the materials were created and modified.
+replace the `<x>` and `<y>` with numbers to denote the years in which the materials were created and modified.
 - the package name should start with `com.here.platform`
 - the folder structure should reflect the package name
 - `*` for `imports` should not be used in the Java-classes. Each import should be declared explicitly.
