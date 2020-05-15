@@ -2,10 +2,9 @@
 
 ## Introduction
 
-`Artifact Wagon` is Maven Java project with standard directory layout:
-- src/main/java
-- src/main/resources
-- src/test/java
+The team behind the [Artifact Wagon](https://github.com/heremaps/here-artifact-maven-wagon) gratefully
+accepts contributions via [pull requests](https://help.github.com/articles/about-pull-requests/) filed
+against the [GitHub project](https://github.com/heremaps/here-artifact-maven-wagon/pulls).
 
 ## Build
 
@@ -43,7 +42,7 @@ Code styles conventions :
 - the Java class should have **Copyright Notice**:
 ```text
 /*
- * Copyright (C) 2018-2020 HERE Europe B.V.
+ * Copyright (C) 20<x>-20<y> HERE Europe B.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,6 +60,7 @@ Code styles conventions :
  * License-Filename: LICENSE
  */
 ```
+replace the <x> and <y> with numbers to denote the years in which the materials were created and modified.
 - the package name should start with `com.here.platform`
 - the folder structure should reflect the package name
 - `*` for `imports` should not be used in the Java-classes. Each import should be declared explicitly.
