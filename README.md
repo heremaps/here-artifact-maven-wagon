@@ -97,7 +97,7 @@ As a Marketplace user you can add this dependency for fetching the Java / Scala 
 ```
 
 `here+artifact-service://artifact-service` is placeholder URL which will be replaced by plugin dynamically based on your credentials.
-The latest versions of Data Client Library and Schemas can be found in [SDK documentation](https://developer.here.com/olp/documentation/java-scala-dev/dev_guide/sdk-libraries.html)
+The latest versions of the Data Client Library and Schemas can be found in [SDK documentation](https://developer.here.com/olp/documentation/java-scala-dev/dev_guide/sdk-libraries.html)
 
 
 #### Proxy Setup
