@@ -65,8 +65,6 @@ replace the `<x>` and `<y>` with numbers to denote the years in which the materi
 - the folder structure should reflect the package name
 - `*` for `imports` should not be used in the Java-classes. Each import should be declared explicitly.
 - it is recommended to use [Google Java Format](https://github.com/google/google-java-format) without any single change to it.
-For this purpose configure your IDE with the plugin and enable it.
-When enabled, it will replace the normal `Reformat Code` action, which can be triggered from the `Code` menu or with the `Ctrl-Alt-L` (by default) keyboard shortcut.
 
 # Commit Signing
 
@@ -75,7 +73,7 @@ As part of filing a pull request we ask you to sign off the
 Any Pull Request with commits that are not signed off will be reject by the
 [DCO check](https://probot.github.io/apps/dco/).
 
-A DCO is lightweight way for a contributor to confirm that you wrote or otherwise have the right
+A DCO is lightweight way for a contributors to confirm that they wrote or otherwise have the right
 to submit code or documentation to a project. Simply add `Signed-off-by` as shown in the example below
 to indicate that you agree with the DCO.
 

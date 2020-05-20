@@ -21,7 +21,7 @@ Once you have enabled your account you need to create the credentials and prepar
 ## How to use it?
 This Maven Wagon plugin is published on [Maven Central](https://search.maven.org/artifact/com.here.platform.artifact/artifact-wagon) so you can conveniently use it from your Maven POM.
 
-For example, to fetch the HERE Map Content - Topology Geometry - Protocol Buffers schema and the relative Java and Scala bindings set the following dependencies:
+For example, to fetch the HERE Map Content - Topology Geometry - Protocol Buffers schema and the related Java and Scala bindings set the following dependencies:
 
 ```xml
 <dependencies>
@@ -95,6 +95,10 @@ As a Marketplace user you can add this dependency for fetching the Java / Scala 
   </extensions>
 </build>
 ```
+
+`here+artifact-service://artifact-service` is placeholder URL which will be replaced by plugin dynamically based on your credentials.
+The latest versions of Data Client Library and Schemas can be found in [SDK documentation](https://developer.here.com/olp/documentation/java-scala-dev/dev_guide/sdk-libraries.html)
+
 
 #### Proxy Setup
 To enable Maven and the HERE Maven Wagon Plugin to work behind a corporate proxy, you need to add the following proxy
