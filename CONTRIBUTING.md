@@ -73,7 +73,7 @@ As part of filing a pull request we ask you to sign off the
 Any Pull Request with commits that are not signed off will be reject by the
 [DCO check](https://probot.github.io/apps/dco/).
 
-A DCO is lightweight way for a contributors to confirm that they wrote or otherwise have the right
+A DCO is lightweight way for contributors to confirm that they wrote or otherwise have the right
 to submit code or documentation to a project. Simply add `Signed-off-by` as shown in the example below
 to indicate that you agree with the DCO.
 
