@@ -67,7 +67,7 @@
         <java.version>1.8</java.version>
         <maven.wagon>3.0.0</maven.wagon>
         <maven.lib.dir>/usr/local/Cellar/maven/3.5.3/libexec/lib/ext</maven.lib.dir>
-        <here.oauth.version>0.4.19</here.oauth.version>
+        <here.oauth.version>0.4.20</here.oauth.version>
     </properties>
 
     <dependencies>
