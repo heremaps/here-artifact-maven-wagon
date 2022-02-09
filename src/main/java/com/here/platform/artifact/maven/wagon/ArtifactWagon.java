@@ -40,7 +40,10 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.execchain.ClientExecChain;
+import org.apache.http.impl.execchain.ServiceUnavailableRetryExec;
 import org.apache.http.util.EntityUtils;
 import org.apache.maven.wagon.ResourceDoesNotExistException;
 import org.apache.maven.wagon.TransferFailedException;
@@ -52,6 +55,7 @@ import org.apache.maven.wagon.resource.Resource;
 import org.apache.maven.wagon.shared.http.AbstractHttpClientWagon;
 import org.apache.maven.wagon.shared.http.EncodingUtil;
 import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.util.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +63,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.here.account.auth.OAuth1ClientCredentialsProvider;
-import com.here.account.http.HttpConstants;
 import com.here.account.http.HttpProvider;
 import com.here.account.http.apache.ApacheHttpClientProvider;
 import com.here.account.oauth2.ClientAuthorizationRequestProvider;
@@ -121,7 +124,7 @@ public class ArtifactWagon extends AbstractHttpClientWagon {
 
   private String authorization;
 
-  public ArtifactWagon() {
+  public ArtifactWagon() throws IllegalAccessException {
     // load the HERE credentials file
     this.hereProperties = loadHereProperties();
 
@@ -136,6 +139,7 @@ public class ArtifactWagon extends AbstractHttpClientWagon {
     objectMapper = new ObjectMapper();
     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+    setRetryStrategy();
   }
 
   @Override
@@ -514,5 +518,18 @@ public class ArtifactWagon extends AbstractHttpClientWagon {
         LOG.trace("Error during consuming response", exp);
       }
     }
+  }
+
+  /**
+   * Here we set retry strategy for internal http client. This workaround is used in order to avoid using
+   * of 'maven.wagon.http.serviceUnavailableRetryStrategy.class' environment variable
+   * That environment variable might lead to ClassNotFoundException with Maven 3.8.1
+   * @see <a href="https://github.com/apache/maven-wagon/pull/57">WAGON-567</a>
+   */
+  private void setRetryStrategy() throws IllegalAccessException {
+    CloseableHttpClient httpClient = getHttpClient();
+    ClientExecChain clientExecChain = (ClientExecChain) ReflectionUtils.getValueIncludingSuperclasses("execChain", httpClient);
+    ServiceUnavailableRetryExec serviceUnavailableRetryExec = new ServiceUnavailableRetryExec(clientExecChain, new XRateLimitServiceUnavailableRetryStrategy());
+    ReflectionUtils.setVariableValueInObject(httpClient, "execChain", serviceUnavailableRetryExec);
   }
 }
