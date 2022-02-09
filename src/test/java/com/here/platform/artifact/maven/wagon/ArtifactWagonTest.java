@@ -54,7 +54,7 @@ public class ArtifactWagonTest {
   private Map<String, HttpResponse> responses;
 
   @Before
-  public void setup() {
+  public void setup() throws IllegalAccessException {
     responses = new HashMap<>();
     repository = new Repository("example-repo", "here+https://example.com/artifact");
 
