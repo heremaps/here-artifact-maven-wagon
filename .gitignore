@@ -2,6 +2,7 @@
 .idea/
 target/
 *.iml
+*.iml
 *.iws
 .settings/
 
