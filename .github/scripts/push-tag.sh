@@ -22,10 +22,9 @@ RELEASE_TAG=$(mvn -q \
     --non-recursive \
     exec:exec)
 
-git config user.name "Travis CI"
+git config user.name "GitHub CI"
 git config user.email "ARTIFACT_SERVICE_SUPPORT@here.com"
 
-git tag -a "${RELEASE_TAG}" -m "Release $RELEASE_TAG from build $TRAVIS_BUILD_ID"
+git tag -a "${RELEASE_TAG}" -m "Release ${RELEASE_TAG} from build ${GITHUB_JOB}"
 
-git remote add origin-travis https://${GITHUB_TOKEN}@${GITHUB_REPO}
-git push origin-travis "${RELEASE_TAG}"
+git push origin --tags
