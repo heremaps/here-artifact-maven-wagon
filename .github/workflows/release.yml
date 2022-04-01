@@ -13,8 +13,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       with:
-        #ref: master
-        ref: switch-to-github-actions # WIP: set to master again
+        ref: master
         fetch-depth: 0
     - name: Set up JDK 8
       uses: actions/setup-java@v2
