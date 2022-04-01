@@ -38,7 +38,7 @@ public class ArtifactWagonPropertiesResolver {
   private static final String PROD_ARTIFACT_SERVICE_URL =
       "https://artifact.api.platform.here.com/v1/artifact";
   private static final String STAGING_ARTIFACT_SERVICE_URL =
-      "https://artifact.api.platform.in.here.com/v1/artifact";
+      "https://artifact.api.platform.sit.here.com/v1/artifact";
   private static final String CN_PROD_ARTIFACT_SERVICE_URL =
       "https://artifact.api.platform.hereolp.cn/v1/artifact";
   private static final String CN_STAGING_ARTIFACT_SERVICE_URL =
