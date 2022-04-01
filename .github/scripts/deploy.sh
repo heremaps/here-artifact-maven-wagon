@@ -1,6 +1,8 @@
 #!/bin/bash
 set -ev
 
+export GPG_TTY=$(tty)
+
 gpg --version
 
 # Import gpg key
