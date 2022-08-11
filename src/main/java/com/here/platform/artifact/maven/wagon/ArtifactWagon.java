@@ -18,10 +18,12 @@
  */
 package com.here.platform.artifact.maven.wagon;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.net.URI;
 import java.util.Optional;
 import java.util.Properties;
@@ -99,6 +101,7 @@ public class ArtifactWagon extends AbstractHttpClientWagon {
   private static final Logger LOG = LoggerFactory.getLogger(ArtifactWagon.class);
   private static final String REGISTER_PREFIX = "register";
   private static final String HERE_CREDENTIALS_PROPERTY = "hereCredentialsFile";
+  private static final String HERE_CREDENTIALS_STRING_PROPERTY = "hereCredentialsString";
   private static final String HERE_CREDENTIALS_ENV = "HERE_CREDENTIALS_FILE";
   private static final String HERE_CREDENTIALS_PATH = ".here/credentials.properties";
   private static final String HERE_ENDPOINT_URL_KEY = "here.token.endpoint.url";
@@ -427,7 +430,26 @@ public class ArtifactWagon extends AbstractHttpClientWagon {
    */
   protected Properties loadHereProperties() {
     Properties properties = new Properties();
+    String credentialsString = System.getProperty(HERE_CREDENTIALS_STRING_PROPERTY);
+    if(isEmpty(credentialsString)) {
+      loadCredentialsFromFile(properties);
+    } else {
+      loadCredentialsFromString(properties, credentialsString);
+    }
+    return properties;
+  }
 
+  private void loadCredentialsFromString(Properties properties, String credentialsString) {
+    LOG.debug("Attempting to create credentials from command line parameter");
+    ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(credentialsString.getBytes());
+    try {
+      properties.load(byteArrayInputStream);
+    } catch (IOException exp) {
+      LOG.warn("Unable to create client credentials from command line parameter {}", HERE_CREDENTIALS_STRING_PROPERTY, exp);
+    }
+  }
+
+  private void loadCredentialsFromFile(Properties properties) {
     // check for credentials file
     File file;
     String systemPropertyFile = System.getProperty(HERE_CREDENTIALS_PROPERTY);
@@ -463,8 +485,6 @@ public class ArtifactWagon extends AbstractHttpClientWagon {
     } else {
       LOG.warn("Unable to read configured file: {}", file.getAbsolutePath());
     }
-
-    return properties;
   }
 
   /**
