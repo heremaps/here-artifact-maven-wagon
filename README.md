@@ -20,9 +20,7 @@ Once you have enabled your account you need to create the credentials and prepar
 
 Please note, by default the Maven Wagon plugin uses the `credentials.properties` file provided in the `.here` directory in the user home directory. 
 There are three options to override the credentials:
-- The first option is the system property `hereCredentialsFile`, the property should be added to the maven command the following way `-DhereCredentialsFile=/full/path/to/credentials.properties`.
-- The second option is the environment variable `HERE_CREDENTIALS_FILE`.  The variable should contain the full file path to the `credentials.properties` file to be used. The variable is taken into account only if there is no system property provided.
-- The third option is the system property `hereCredentialsString`, the property should be added to the maven command the following way:
+- The first option is the system property `hereCredentialsString`, the property should be added to the maven command the following way:
 ```
 -DhereCredentialsString='here.access.key.id=...
   here.access.key.secret=...
@@ -31,6 +29,8 @@ There are three options to override the credentials:
   here.token.endpoint.url=...'
 ```
 Note that providing credentials via `hereCredentialsString` property have the highest precedence
+- The second option is the system property `hereCredentialsFile`, the property should be added to the maven command the following way `-DhereCredentialsFile=/full/path/to/credentials.properties`.
+- The third option is the environment variable `HERE_CREDENTIALS_FILE`.  The variable should contain the full file path to the `credentials.properties` file to be used. The variable is taken into account only if there is no system property provided.
 
 ## How to use it?
 This Maven Wagon plugin is published on [Maven Central](https://search.maven.org/artifact/com.here.platform.artifact/artifact-wagon) so you can conveniently use it from your Maven POM.
