@@ -431,10 +431,10 @@ public class ArtifactWagon extends AbstractHttpClientWagon {
   protected Properties loadHereProperties() {
     Properties properties = new Properties();
     String credentialsString = System.getProperty(HERE_CREDENTIALS_STRING_PROPERTY);
-    if(isEmpty(credentialsString)) {
-      loadCredentialsFromFile(properties);
-    } else {
+    if (!isEmpty(credentialsString)) {
       loadCredentialsFromString(properties, credentialsString);
+    } else {
+      loadCredentialsFromFile(properties);
     }
     return properties;
   }
