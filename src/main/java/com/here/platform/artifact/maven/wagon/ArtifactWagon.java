@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringReader;
 import java.net.URI;
 import java.util.Optional;
 import java.util.Properties;
@@ -101,7 +100,7 @@ public class ArtifactWagon extends AbstractHttpClientWagon {
   private static final Logger LOG = LoggerFactory.getLogger(ArtifactWagon.class);
   private static final String REGISTER_PREFIX = "register";
   private static final String HERE_CREDENTIALS_PROPERTY = "hereCredentialsFile";
-  private static final String HERE_CREDENTIALS_STRING_PROPERTY = "hereCredentialsString";
+  private static final String HERE_CREDENTIALS_STRING_ENV = "HERE_CREDENTIALS_STRING";
   private static final String HERE_CREDENTIALS_ENV = "HERE_CREDENTIALS_FILE";
   private static final String HERE_CREDENTIALS_PATH = ".here/credentials.properties";
   private static final String HERE_ENDPOINT_URL_KEY = "here.token.endpoint.url";
@@ -430,28 +429,45 @@ public class ArtifactWagon extends AbstractHttpClientWagon {
    */
   protected Properties loadHereProperties() {
     Properties properties = new Properties();
-    String credentialsString = System.getProperty(HERE_CREDENTIALS_STRING_PROPERTY);
-    if (!isEmpty(credentialsString)) {
+    File file = resolveFile();
+    if(file != null) {
+      loadCredentialsFromFile(properties, file);
+    }
+    String credentialsString = System.getenv(HERE_CREDENTIALS_STRING_ENV);
+    if (properties.isEmpty() && !isEmpty(credentialsString)) {
       loadCredentialsFromString(properties, credentialsString);
     } else {
-      loadCredentialsFromFile(properties);
+      loadCredentialsFromFile(properties, new File(System.getProperty("user.home"), HERE_CREDENTIALS_PATH));
     }
     return properties;
   }
 
   private void loadCredentialsFromString(Properties properties, String credentialsString) {
-    LOG.debug("Attempting to create credentials from command line parameter");
+    LOG.debug("Attempting to create credentials from environment variable");
     ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(credentialsString.getBytes());
     try {
       properties.load(byteArrayInputStream);
     } catch (IOException exp) {
-      LOG.warn("Unable to create client credentials from command line parameter {}", HERE_CREDENTIALS_STRING_PROPERTY, exp);
+      LOG.warn("Unable to create client credentials from environment variable {}", HERE_CREDENTIALS_STRING_ENV, exp);
     }
   }
 
-  private void loadCredentialsFromFile(Properties properties) {
-    // check for credentials file
-    File file;
+  private void loadCredentialsFromFile(Properties properties, File file) {
+    LOG.debug("Using here credentials file: {}", file.getAbsolutePath());
+    if (file.exists() && file.canRead()) {
+      LOG.debug("Attempting to read credentials file at: {}", file.getAbsolutePath());
+      try (InputStream in = new FileInputStream(file)) {
+        properties.load(in);
+      } catch (IOException exp) {
+        LOG.warn("Unable to read client credentials at {}", file.getAbsolutePath(), exp);
+      }
+    } else {
+      LOG.warn("Unable to read configured file: {}", file.getAbsolutePath());
+    }
+  }
+
+  private static File resolveFile() {
+    File file = null;
     String systemPropertyFile = System.getProperty(HERE_CREDENTIALS_PROPERTY);
     if (!isEmpty(systemPropertyFile)) {
       LOG.debug(
@@ -467,24 +483,10 @@ public class ArtifactWagon extends AbstractHttpClientWagon {
             systemPropertyFile);
       }
     }
-
     if (!isEmpty(systemPropertyFile)) {
       file = new File(systemPropertyFile);
-    } else {
-      file = new File(System.getProperty("user.home"), HERE_CREDENTIALS_PATH);
     }
-
-    LOG.debug("Using here credentials file: {}", file.getAbsolutePath());
-    if (file.exists() && file.canRead()) {
-      LOG.debug("Attempting to read credentials file at: {}", file.getAbsolutePath());
-      try (InputStream in = new FileInputStream(file)) {
-        properties.load(in);
-      } catch (IOException exp) {
-        LOG.warn("Unable to read client credentials at {}", file.getAbsolutePath(), exp);
-      }
-    } else {
-      LOG.warn("Unable to read configured file: {}", file.getAbsolutePath());
-    }
+    return file;
   }
 
   /**
