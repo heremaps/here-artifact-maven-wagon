@@ -34,6 +34,7 @@ import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.message.BasicHttpResponse;
 import org.apache.http.message.BasicStatusLine;
 import org.apache.http.util.EntityUtils;
+import org.apache.maven.wagon.CommandExecutionException;
 import org.apache.maven.wagon.repository.Repository;
 import org.apache.maven.wagon.resource.Resource;
 import org.junit.Before;
@@ -60,6 +61,11 @@ public class ArtifactWagonTest {
 
     artifactWagon =
         new ArtifactWagon() {
+
+          @Override
+          String getDefaultArtifactServiceUrl() {
+            return "https://artifact.api.platform.here.com/v1/artifact";
+          }
 
           @Override
           public Repository getRepository() {

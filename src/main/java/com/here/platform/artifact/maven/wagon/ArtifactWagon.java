@@ -18,18 +18,25 @@
  */
 package com.here.platform.artifact.maven.wagon;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.Optional;
-import java.util.Properties;
-
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.here.account.auth.OAuth1ClientCredentialsProvider;
+import com.here.account.http.HttpProvider;
+import com.here.account.http.apache.ApacheHttpClientProvider;
+import com.here.account.oauth2.ClientAuthorizationRequestProvider;
+import com.here.account.oauth2.ClientCredentialsGrantRequest;
+import com.here.account.oauth2.HereAccount;
+import com.here.account.oauth2.TokenEndpoint;
+import com.here.platform.artifact.maven.wagon.model.RegisterRequest;
+import com.here.platform.artifact.maven.wagon.model.RegisterResponse;
+import com.here.platform.artifact.maven.wagon.model.ServiceExceptionResponse;
+import com.here.platform.artifact.maven.wagon.resolver.ArtifactWagonPropertiesResolver;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpException;
 import org.apache.http.HttpHost;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.HttpStatus;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -45,6 +52,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.execchain.ClientExecChain;
 import org.apache.http.impl.execchain.ServiceUnavailableRetryExec;
+import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.apache.maven.wagon.ResourceDoesNotExistException;
 import org.apache.maven.wagon.TransferFailedException;
@@ -60,20 +68,14 @@ import org.codehaus.plexus.util.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.here.account.auth.OAuth1ClientCredentialsProvider;
-import com.here.account.http.HttpProvider;
-import com.here.account.http.apache.ApacheHttpClientProvider;
-import com.here.account.oauth2.ClientAuthorizationRequestProvider;
-import com.here.account.oauth2.ClientCredentialsGrantRequest;
-import com.here.account.oauth2.HereAccount;
-import com.here.account.oauth2.TokenEndpoint;
-import com.here.platform.artifact.maven.wagon.model.RegisterRequest;
-import com.here.platform.artifact.maven.wagon.model.RegisterResponse;
-import com.here.platform.artifact.maven.wagon.model.ServiceExceptionResponse;
-import com.here.platform.artifact.maven.wagon.resolver.ArtifactWagonPropertiesResolver;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.Optional;
+import java.util.Properties;
 
 import static com.here.platform.artifact.maven.wagon.util.StringUtils.defaultIfEmpty;
 import static com.here.platform.artifact.maven.wagon.util.StringUtils.isEmpty;
@@ -121,7 +123,7 @@ public class ArtifactWagon extends AbstractHttpClientWagon {
 
   private final Object lock = new Object();
   private final ObjectMapper objectMapper;
-  private final String defaultArtifactServiceUrl;
+  private String defaultArtifactServiceUrl;
   private final Properties hereProperties;
 
   private String authorization;
@@ -130,18 +132,49 @@ public class ArtifactWagon extends AbstractHttpClientWagon {
     // load the HERE credentials file
     this.hereProperties = loadHereProperties();
 
-    // resolve hrnPrefix and artifactServiceUrl by here token endpoint url.
-    String hereTokenEndpointUrl = this.hereProperties.getProperty(HERE_ENDPOINT_URL_KEY);
-    ArtifactWagonPropertiesResolver environmentPropertiesResolver =
-        new ArtifactWagonPropertiesResolver();
-    this.defaultArtifactServiceUrl =
-        environmentPropertiesResolver.resolveArtifactServiceUrl(hereTokenEndpointUrl);
-
     // configure JSON
     objectMapper = new ObjectMapper();
     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
     setRetryStrategy();
+  }
+
+  String getDefaultArtifactServiceUrl() {
+    if(this.defaultArtifactServiceUrl == null) {
+      // resolve hrnPrefix and artifactServiceUrl by here token endpoint url.
+      try (CloseableHttpClient httpclient = createProxyAwareHttpClient()) {
+        String hereTokenEndpointUrl = this.hereProperties.getProperty(HERE_ENDPOINT_URL_KEY);
+        ArtifactWagonPropertiesResolver environmentPropertiesResolver = new ArtifactWagonPropertiesResolver(httpclient::execute, objectMapper);
+        this.defaultArtifactServiceUrl = environmentPropertiesResolver.resolveArtifactServiceUrl(hereTokenEndpointUrl);
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    }
+    return this.defaultArtifactServiceUrl;
+  }
+
+  private CloseableHttpClient createProxyAwareHttpClient() {
+    HttpClientBuilder httpClientBuilder = HttpClientBuilder.create()
+        .addInterceptorFirst((HttpRequest request, HttpContext context) ->
+          {
+          if (request instanceof HttpUriRequest) {
+            setHeaders((HttpUriRequest) request);
+          }
+          });
+    ProxyInfo proxyInfo = getProxyInfo();
+    if(proxyInfo != null) {
+      String proxyHost = proxyInfo.getHost();
+      int proxyport = proxyInfo.getPort();
+      BasicCredentialsProvider basicCredentialsProvider = new BasicCredentialsProvider();
+      basicCredentialsProvider.setCredentials(
+          new AuthScope(proxyHost, proxyport),
+          new UsernamePasswordCredentials(proxyInfo.getUserName(), proxyInfo.getPassword()));
+      httpClientBuilder
+          .setDefaultCredentialsProvider(basicCredentialsProvider)
+          .setProxy(new HttpHost(proxyHost, proxyport));
+    }
+
+    return httpClientBuilder.build();
   }
 
   @Override
@@ -191,7 +224,7 @@ public class ArtifactWagon extends AbstractHttpClientWagon {
 
     // Process protocol mappings
     if (url.startsWith(ARTIFACT_SERVICE_URL_PLACEHOLDER_PROTOCOL)) {
-      resolvedUrl = defaultArtifactServiceUrl;
+      resolvedUrl = getDefaultArtifactServiceUrl();
     } else {
       // normalize url protocol
       for (String[] entry : PROTOCOL_MAP) {
