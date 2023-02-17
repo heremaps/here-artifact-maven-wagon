@@ -18,9 +18,6 @@
  */
 package com.here.platform.artifact.maven.wagon.layout;
 
-import java.net.URI;
-import java.util.List;
-
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.metadata.DefaultMetadata;
@@ -30,14 +27,15 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
-public class HereRepositoryLayoutTest {
+public class HereRepositoryLayoutDecoratorTest {
 
-  private HereRepositoryLayout layout;
+  private RepositoryLayout layout;
 
   @Before
   public void setup() {
-    this.layout = new HereRepositoryLayout();
+    this.layout = (RepositoryLayout) HereRepositoryLayoutDecorator.newInstance(mock(RepositoryLayout.class));
   }
 
   @Test
@@ -86,18 +84,6 @@ public class HereRepositoryLayoutTest {
         layout
             .getLocation(toMetadata("com.example", "test-schema", null, "metadata.xml"), true)
             .getPath());
-  }
-
-  @Test
-  public void testChecksums() {
-    Artifact artifact = toArtifact("com.example", "test-schema", "1.0", "xml");
-    URI location = layout.getLocation(artifact, false);
-
-    List<RepositoryLayout.Checksum> checksums = layout.getChecksums(artifact, false, location);
-    for (RepositoryLayout.Checksum checksum : checksums) {
-      String extension = checksum.getAlgorithm().replace("-", "").toLowerCase();
-      assertEquals(location.getPath() + "." + extension, checksum.getLocation().toString());
-    }
   }
 
   private Metadata toMetadata(String groupId, String artifactId, String version, String file) {
