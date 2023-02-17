@@ -18,8 +18,6 @@
  */
 package com.here.platform.artifact.maven.wagon.layout;
 
-import javax.inject.Named;
-
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.internal.impl.Maven2RepositoryLayoutFactory;
 import org.eclipse.aether.repository.RemoteRepository;
@@ -27,10 +25,11 @@ import org.eclipse.aether.spi.connector.layout.RepositoryLayout;
 import org.eclipse.aether.spi.connector.layout.RepositoryLayoutFactory;
 import org.eclipse.aether.transfer.NoRepositoryLayoutException;
 
+import javax.inject.Named;
+
 @Named("here")
 public class HereRepositoryLayoutFactory implements RepositoryLayoutFactory {
 
-  private static final HereRepositoryLayout INSTANCE = new HereRepositoryLayout();
   private final Maven2RepositoryLayoutFactory mavenLayoutFactory;
 
   public HereRepositoryLayoutFactory() {
@@ -42,7 +41,11 @@ public class HereRepositoryLayoutFactory implements RepositoryLayoutFactory {
       throws NoRepositoryLayoutException {
     if ("here".equalsIgnoreCase(repository.getContentType())
         || repository.getProtocol().startsWith("here+")) {
-      return INSTANCE;
+      RemoteRepository defaultRepository = new RemoteRepository.Builder(repository)
+          .setContentType("default")
+          .build();
+      RepositoryLayout repositoryLayout = mavenLayoutFactory.newInstance(session, defaultRepository);
+      return (RepositoryLayout) HereRepositoryLayoutDecorator.newInstance(repositoryLayout);
     }
 
     return mavenLayoutFactory.newInstance(session, repository);

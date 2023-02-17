@@ -18,14 +18,13 @@
  */
 package com.here.platform.artifact.maven.wagon.layout;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.List;
-
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.metadata.Metadata;
 import org.eclipse.aether.spi.connector.layout.RepositoryLayout;
+
+import java.lang.reflect.Method;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import static com.here.platform.artifact.maven.wagon.util.StringUtils.defaultIfEmpty;
 import static com.here.platform.artifact.maven.wagon.util.StringUtils.isEmpty;
@@ -36,12 +35,36 @@ import static com.here.platform.artifact.maven.wagon.util.StringUtils.isEmpty;
  * <p>This layout attempts to make URLs that look like: {groupId}/{artifact}/{version}/{file} for
  * easy translation into HRN format within the wagon provider.
  */
-public class HereRepositoryLayout implements RepositoryLayout {
+public class HereRepositoryLayoutDecorator implements java.lang.reflect.InvocationHandler {
 
   private static final char PATH_SEPARATOR = '/';
   private static final char ARTIFACT_SEPARATOR = '-';
   private static final char EXTENSION_SEPARATOR = '.';
   private static final int LOCATION_CAPACITY = 128;
+  private static final Method getLocation_artifact_upload_method;
+  private static final Method getLocation_metadata_upload_method;
+
+  static {
+    try {
+      getLocation_artifact_upload_method = RepositoryLayout.class.getMethod("getLocation", Artifact.class, boolean.class);
+      getLocation_metadata_upload_method = RepositoryLayout.class.getMethod("getLocation", Metadata.class, boolean.class);
+    } catch (NoSuchMethodException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private final RepositoryLayout delegate;
+
+  public static Object newInstance(RepositoryLayout delegate) {
+    return java.lang.reflect.Proxy.newProxyInstance(
+        delegate.getClass().getClassLoader(),
+        new Class[] { RepositoryLayout.class },
+        new HereRepositoryLayoutDecorator(delegate));
+  }
+
+  private HereRepositoryLayoutDecorator(RepositoryLayout delegate) {
+    this.delegate = delegate;
+  }
 
   public URI getLocation(Artifact artifact, boolean upload) {
     StringBuilder path = new StringBuilder(LOCATION_CAPACITY);
@@ -77,14 +100,6 @@ public class HereRepositoryLayout implements RepositoryLayout {
     return toUri(path.toString());
   }
 
-  public List<Checksum> getChecksums(Artifact artifact, boolean upload, URI location) {
-    return getChecksums(location);
-  }
-
-  public List<Checksum> getChecksums(Metadata metadata, boolean upload, URI location) {
-    return getChecksums(location);
-  }
-
   private URI toUri(String path) {
     try {
       return new URI(null, null, path, null);
@@ -93,8 +108,14 @@ public class HereRepositoryLayout implements RepositoryLayout {
     }
   }
 
-  private List<Checksum> getChecksums(URI location) {
-    return Arrays.asList(
-        Checksum.forLocation(location, "SHA-1"), Checksum.forLocation(location, "MD5"));
+  public Object invoke(Object proxy, Method m, Object[] args) throws Throwable {
+    if (m.equals(getLocation_artifact_upload_method) && args.length == 2) {
+      return getLocation((Artifact) args[0], (boolean) args[1]);
+    } else if (m.equals(getLocation_metadata_upload_method) && args.length == 2) {
+      return getLocation((Metadata) args[0], (boolean) args[1]);
+    } else {
+      return m.invoke(delegate, args);
+    }
   }
+
 }

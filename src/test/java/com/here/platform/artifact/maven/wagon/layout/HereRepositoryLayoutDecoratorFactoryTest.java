@@ -25,12 +25,14 @@ import org.eclipse.aether.transfer.NoRepositoryLayoutException;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.lang.reflect.Proxy;
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
-public class HereRepositoryLayoutFactoryTest {
+public class HereRepositoryLayoutDecoratorFactoryTest {
 
   private HereRepositoryLayoutFactory factory;
   private RepositorySystemSession repositorySystemSession;
@@ -46,7 +48,8 @@ public class HereRepositoryLayoutFactoryTest {
     RepositoryLayout layout =
         factory.newInstance(repositorySystemSession, repository("http://example.com", null));
     assertNotNull(layout);
-    assertFalse(layout instanceof HereRepositoryLayout);
+    assertFalse(Proxy.isProxyClass(layout.getClass()));
+    assertFalse(layout instanceof HereRepositoryLayoutDecorator);
   }
 
   @Test
@@ -54,7 +57,7 @@ public class HereRepositoryLayoutFactoryTest {
     RepositoryLayout layout =
         factory.newInstance(repositorySystemSession, repository("here+http://example.com", null));
     assertNotNull(layout);
-    assertTrue(layout instanceof HereRepositoryLayout);
+    assertTrue(Proxy.getInvocationHandler(layout) instanceof HereRepositoryLayoutDecorator);
   }
 
   @Test
@@ -62,7 +65,7 @@ public class HereRepositoryLayoutFactoryTest {
     RepositoryLayout layout =
         factory.newInstance(repositorySystemSession, repository("http://example.com", "here"));
     assertNotNull(layout);
-    assertTrue(layout instanceof HereRepositoryLayout);
+    assertTrue(Proxy.getInvocationHandler(layout) instanceof HereRepositoryLayoutDecorator);
   }
 
   private RemoteRepository repository(String url, String layout) {
