@@ -61,10 +61,10 @@
         <java.version>1.8</java.version>
         <maven.wagon>3.5.1</maven.wagon>
         <maven.lib.dir>/usr/local/Cellar/maven/3.5.3/libexec/lib/ext</maven.lib.dir>
-        <here.oauth.version>0.4.20</here.oauth.version>
+        <here.oauth.version>0.4.25</here.oauth.version>
         <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
         <httpclient.version>4.5.13</httpclient.version>
-        <httpcore.version>4.4.6</httpcore.version>
+        <httpcore.version>4.4.15</httpcore.version>
         <slf4j.version>1.7.24</slf4j.version>
         <junit.version>4.13.1</junit.version>
         <mockito.version>1.10.19</mockito.version>
