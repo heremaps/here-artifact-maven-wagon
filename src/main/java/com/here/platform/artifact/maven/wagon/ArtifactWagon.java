@@ -120,10 +120,13 @@ public class ArtifactWagon extends AbstractHttpClientWagon {
       };
 
   private static final String ARTIFACT_SERVICE_URL_PLACEHOLDER_PROTOCOL = "here+artifact-service";
-
+  /**
+   * Defines the Artifact Service url to use.
+   * NOTE: The variable is static so that the url is pulled only the first time and is reused for all other dependencies..
+   */
+  private static String defaultArtifactServiceUrl;
   private final Object lock = new Object();
   private final ObjectMapper objectMapper;
-  private String defaultArtifactServiceUrl;
   private final Properties hereProperties;
 
   private String authorization;
@@ -140,17 +143,17 @@ public class ArtifactWagon extends AbstractHttpClientWagon {
   }
 
   String getDefaultArtifactServiceUrl() {
-    if(this.defaultArtifactServiceUrl == null) {
+    if(defaultArtifactServiceUrl == null) {
       // resolve hrnPrefix and artifactServiceUrl by here token endpoint url.
       try (CloseableHttpClient httpclient = createProxyAwareHttpClient()) {
         String hereTokenEndpointUrl = this.hereProperties.getProperty(HERE_ENDPOINT_URL_KEY);
         ArtifactWagonPropertiesResolver environmentPropertiesResolver = new ArtifactWagonPropertiesResolver(httpclient::execute, objectMapper);
-        this.defaultArtifactServiceUrl = environmentPropertiesResolver.resolveArtifactServiceUrl(hereTokenEndpointUrl);
+        defaultArtifactServiceUrl = environmentPropertiesResolver.resolveArtifactServiceUrl(hereTokenEndpointUrl);
       } catch (IOException e) {
         throw new RuntimeException(e);
       }
     }
-    return this.defaultArtifactServiceUrl;
+    return defaultArtifactServiceUrl;
   }
 
   private CloseableHttpClient createProxyAwareHttpClient() {
