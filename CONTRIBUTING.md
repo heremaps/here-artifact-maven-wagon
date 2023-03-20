@@ -6,6 +6,15 @@ The team behind the [Artifact Wagon](https://github.com/heremaps/here-artifact-m
 accepts contributions via [pull requests](https://help.github.com/articles/about-pull-requests/) filed
 against the [GitHub project](https://github.com/heremaps/here-artifact-maven-wagon/pulls).
 
+## System requirements
+Version numbers higher than specified are more likely to work properly.
+* Operating system:
+    * Windows 10
+    * MAC OSX 10
+    * Linux (Ubuntu 16.04)
+* Java 8
+* Maven 3.6.3 or later
+
 ## Build
 
 The project uses [Maven](https://maven.apache.org/) build system and build instructions are stored 
