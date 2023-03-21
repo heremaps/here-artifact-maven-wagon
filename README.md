@@ -13,6 +13,15 @@ Go to [the HERE Developer portal](https://developer.here.com/products/open-locat
 
 To learn more about Maven Wagon visit [this page](https://maven.apache.org/wagon/).
 
+## System requirements
+Version numbers higher than specified are more likely to work properly.
+* Operating system:
+    * Windows 10
+    * MAC OSX 10
+    * Linux (Ubuntu 16.04)
+* Java 8
+* Maven 3.6.3 or later
+
 ##  Prerequisites
 To access libraries and schemas from the HERE platform, you need a HERE Workspace and/or a HERE Marketplace account. If you don’t have an account yet, go to [Pricing and Plans](https://developer.here.com/pricing/open-location-platform) to apply for a free trial.
 
