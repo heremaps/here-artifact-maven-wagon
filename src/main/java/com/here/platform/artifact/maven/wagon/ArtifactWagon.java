@@ -99,6 +99,7 @@ public class ArtifactWagon extends AbstractHttpClientWagon {
       "The resource may already exist "
           + "in the system but your credentials may not grant modification privileges to it";
 
+  private static final String FILE_PUT_ERROR_MESSAGE = "Failed to put the %s artifact file";
   private static final Logger LOG = LoggerFactory.getLogger(ArtifactWagon.class);
   private static final String REGISTER_PREFIX = "register";
   private static final String HERE_CREDENTIALS_PROPERTY = "hereCredentialsFile";
@@ -276,7 +277,28 @@ public class ArtifactWagon extends AbstractHttpClientWagon {
       super.put(source, resourceName);
     } catch (AuthorizationException e) {
       throw new AuthorizationException(AUTHORIZATION_FORBIDDEN_ERROR_MESSAGE, e);
+    } catch (RuntimeException re){
+      throw new TransferFailedException(String.format(FILE_PUT_ERROR_MESSAGE, resourceName), re);
     }
+  }
+
+  @Override
+  protected CloseableHttpResponse execute(HttpUriRequest httpMethod) throws HttpException, IOException {
+    CloseableHttpResponse httpResponse = super.execute(httpMethod);
+
+      int status = httpResponse.getStatusLine().getStatusCode();
+      if (status == HttpStatus.SC_UNPROCESSABLE_ENTITY) {
+        String message = "";
+        String content = EntityUtils.toString(httpResponse.getEntity());
+        if (!content.isEmpty()) {
+          ServiceExceptionResponse exceptionResponse =
+                  objectMapper.readValue(content, ServiceExceptionResponse.class);
+          message = exceptionResponse.getMessage();
+        }
+        throw new RuntimeException(httpResponse.getStatusLine() + " " + message);
+      }
+
+    return httpResponse;
   }
 
   @Override
