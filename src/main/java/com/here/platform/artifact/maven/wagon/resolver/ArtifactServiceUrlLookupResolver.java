@@ -19,26 +19,25 @@
 package com.here.platform.artifact.maven.wagon.resolver;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.here.platform.artifact.maven.wagon.RequestExecutor;
 import com.here.platform.artifact.maven.wagon.model.LookupPlatformApisResponse;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpException;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 /**
- * Artifact Wagon properties resolver. Resolves schema hrn prefix and default artifact service url
- * based on here token url.
+ * Resolves Artifact Service URL based on here token URL and lookup API.
  */
-public class ArtifactWagonPropertiesResolver {
+class ArtifactServiceUrlLookupResolver implements ArtifactServiceUrlResolver {
 
   private static final String TOKEN_PROD_URL = "https://account.api.here.com/oauth2/token";
 
@@ -79,42 +78,47 @@ public class ArtifactWagonPropertiesResolver {
   }
 
 
-  private final RequestExecutor requestExecutor;
+  private final Supplier<CloseableHttpClient> httpClientFactory;
 
   private final ObjectMapper objectMapper;
 
-  public ArtifactWagonPropertiesResolver(RequestExecutor requestExecutor, ObjectMapper objectMapper) {
-    this.requestExecutor = requestExecutor;
+  public ArtifactServiceUrlLookupResolver(Supplier<CloseableHttpClient> httpClientFactory, ObjectMapper objectMapper) {
+    this.httpClientFactory = httpClientFactory;
     this.objectMapper = objectMapper;
   }
 
   /**
-   * Resolves schema default artifact service url based on here token url.
+   * Resolves Artifact Service url based on here token url and lookup API.
    *
    * @param tokenUrl here token url
    * @return resolved default artifact service url
    */
+  @Override
   public String resolveArtifactServiceUrl(String tokenUrl) {
     String artifactApiLookupUrl = getApiLookupUrl(tokenUrl) + "/platform/apis/artifact/v1";
     HttpGet httpGet = new HttpGet(artifactApiLookupUrl);
 
-    try {
-      try (CloseableHttpResponse httpResponse = requestExecutor.apply(httpGet)) {
-        StatusLine statusLine = httpResponse.getStatusLine();
-        int status = statusLine.getStatusCode();
-        if (status != HttpStatus.SC_OK) {
-          throw new RuntimeException("Unable to resolve Artifact Service URL. Status: " + statusLine);
-        }
-        HttpEntity responseEntity = httpResponse.getEntity();
-        return Stream.of(objectMapper.readValue(responseEntity.getContent(), LookupPlatformApisResponse[].class))
-            .findFirst()
-            .map(r -> r.getBaseURL() + "/artifact")
-            .orElseThrow(() -> new RuntimeException("No Artifact Service URL found via Lookup API"));
+    try (CloseableHttpClient closeableHttpClient = httpClientFactory.get();
+         CloseableHttpResponse httpResponse = closeableHttpClient.execute(httpGet)) {
+      StatusLine statusLine = httpResponse.getStatusLine();
+      int status = statusLine.getStatusCode();
+      if (status != HttpStatus.SC_OK) {
+        throw new RuntimeException("Unable to resolve Artifact Service URL. Status: " + statusLine);
       }
-    } catch (IOException | HttpException exp) {
+      HttpEntity responseEntity = httpResponse.getEntity();
+      return Stream.of(objectMapper.readValue(responseEntity.getContent(), LookupPlatformApisResponse[].class))
+          .findFirst()
+          .map(r -> r.getBaseURL() + "/artifact")
+          .orElseThrow(() -> new RuntimeException("No Artifact Service URL found via Lookup API"));
+    } catch (IOException exp) {
       String msg = String.format("Error during resolving Artifact Service URL: %s", exp.getMessage());
       throw new RuntimeException(msg, exp);
     }
+  }
+
+  @Override
+  public void afterUrlResolved(String tokenUrl, String resolvedUrl) {
+    //no op
   }
 
   private String getApiLookupUrl(String tokenUrl) {
