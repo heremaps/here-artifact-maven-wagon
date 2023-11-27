@@ -31,13 +31,9 @@ import com.here.account.oauth2.TokenEndpoint;
 import com.here.platform.artifact.maven.wagon.model.RegisterRequest;
 import com.here.platform.artifact.maven.wagon.model.RegisterResponse;
 import com.here.platform.artifact.maven.wagon.model.ServiceExceptionResponse;
-import com.here.platform.artifact.maven.wagon.resolver.ArtifactWagonPropertiesResolver;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpException;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpRequestInterceptor;
-import org.apache.http.HttpStatus;
+import com.here.platform.artifact.maven.wagon.resolver.ArtifactServiceUrlResolverChain;
+import com.here.platform.artifact.maven.wagon.util.StringUtils;
+import org.apache.http.*;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
@@ -68,11 +64,7 @@ import org.codehaus.plexus.util.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URI;
 import java.util.Optional;
 import java.util.Properties;
@@ -115,17 +107,12 @@ public class ArtifactWagon extends AbstractHttpClientWagon {
    * Defines the protocol mapping to use. NOTE: The order of the mapping becomes the search order.
    */
   private static final String[][] PROTOCOL_MAP =
-      new String[][] {
-        {"here+http://", "http://"}, // http and here auth
-        {"here+https://", "https://"}, // https and here auth
+      new String[][]{
+          {"here+http://", "http://"}, // http and here auth
+          {"here+https://", "https://"}, // https and here auth
       };
 
   private static final String ARTIFACT_SERVICE_URL_PLACEHOLDER_PROTOCOL = "here+artifact-service";
-  /**
-   * Defines the Artifact Service url to use.
-   * NOTE: The variable is static so that the url is pulled only the first time and is reused for all other dependencies..
-   */
-  private static String defaultArtifactServiceUrl;
   private final Object lock = new Object();
   private final ObjectMapper objectMapper;
   private final Properties hereProperties;
@@ -144,29 +131,24 @@ public class ArtifactWagon extends AbstractHttpClientWagon {
   }
 
   String getDefaultArtifactServiceUrl() {
-    if(defaultArtifactServiceUrl == null) {
-      // resolve hrnPrefix and artifactServiceUrl by here token endpoint url.
-      try (CloseableHttpClient httpclient = createProxyAwareHttpClient()) {
-        String hereTokenEndpointUrl = this.hereProperties.getProperty(HERE_ENDPOINT_URL_KEY);
-        ArtifactWagonPropertiesResolver environmentPropertiesResolver = new ArtifactWagonPropertiesResolver(httpclient::execute, objectMapper);
-        defaultArtifactServiceUrl = environmentPropertiesResolver.resolveArtifactServiceUrl(hereTokenEndpointUrl);
-      } catch (IOException e) {
-        throw new RuntimeException(e);
-      }
+    String hereTokenEndpointUrl = this.hereProperties.getProperty(HERE_ENDPOINT_URL_KEY);
+    ArtifactServiceUrlResolverChain artifactServiceUrlResolverChain = new ArtifactServiceUrlResolverChain(this::createProxyAwareHttpClient, objectMapper);
+    String artifactServiceUrl = artifactServiceUrlResolverChain.resolveArtifactServiceUrl(hereTokenEndpointUrl);
+    if (StringUtils.isEmpty(artifactServiceUrl)) {
+      throw new RuntimeException("Unable to resolve Artifact Service URL");
     }
-    return defaultArtifactServiceUrl;
+    return artifactServiceUrl;
   }
 
   private CloseableHttpClient createProxyAwareHttpClient() {
     HttpClientBuilder httpClientBuilder = HttpClientBuilder.create()
-        .addInterceptorFirst((HttpRequest request, HttpContext context) ->
-          {
+        .addInterceptorFirst((HttpRequest request, HttpContext context) -> {
           if (request instanceof HttpUriRequest) {
             setHeaders((HttpUriRequest) request);
           }
-          });
+        });
     ProxyInfo proxyInfo = getProxyInfo();
-    if(proxyInfo != null) {
+    if (proxyInfo != null) {
       String proxyHost = proxyInfo.getHost();
       int proxyport = proxyInfo.getPort();
       BasicCredentialsProvider basicCredentialsProvider = new BasicCredentialsProvider();
@@ -177,7 +159,6 @@ public class ArtifactWagon extends AbstractHttpClientWagon {
           .setDefaultCredentialsProvider(basicCredentialsProvider)
           .setProxy(new HttpHost(proxyHost, proxyport));
     }
-
     return httpClientBuilder.build();
   }
 
@@ -277,7 +258,7 @@ public class ArtifactWagon extends AbstractHttpClientWagon {
       super.put(source, resourceName);
     } catch (AuthorizationException e) {
       throw new AuthorizationException(AUTHORIZATION_FORBIDDEN_ERROR_MESSAGE, e);
-    } catch (RuntimeException re){
+    } catch (RuntimeException re) {
       throw new TransferFailedException(String.format(FILE_PUT_ERROR_MESSAGE, resourceName), re);
     }
   }
@@ -286,17 +267,17 @@ public class ArtifactWagon extends AbstractHttpClientWagon {
   protected CloseableHttpResponse execute(HttpUriRequest httpMethod) throws HttpException, IOException {
     CloseableHttpResponse httpResponse = super.execute(httpMethod);
 
-      int status = httpResponse.getStatusLine().getStatusCode();
-      if (status == HttpStatus.SC_UNPROCESSABLE_ENTITY) {
-        String message = "";
-        String content = EntityUtils.toString(httpResponse.getEntity());
-        if (!content.isEmpty()) {
-          ServiceExceptionResponse exceptionResponse =
-                  objectMapper.readValue(content, ServiceExceptionResponse.class);
-          message = exceptionResponse.getMessage();
-        }
-        throw new RuntimeException(httpResponse.getStatusLine() + " " + message);
+    int status = httpResponse.getStatusLine().getStatusCode();
+    if (status == HttpStatus.SC_UNPROCESSABLE_ENTITY) {
+      String message = "";
+      String content = EntityUtils.toString(httpResponse.getEntity());
+      if (!content.isEmpty()) {
+        ServiceExceptionResponse exceptionResponse =
+            objectMapper.readValue(content, ServiceExceptionResponse.class);
+        message = exceptionResponse.getMessage();
       }
+      throw new RuntimeException(httpResponse.getStatusLine() + " " + message);
+    }
 
     return httpResponse;
   }
@@ -488,7 +469,7 @@ public class ArtifactWagon extends AbstractHttpClientWagon {
   protected Properties loadHereProperties() {
     Properties properties = new Properties();
     File file = resolveFile();
-    if(file != null) {
+    if (file != null) {
       loadCredentialsFromFile(properties, file);
     }
     String credentialsString = System.getenv(HERE_CREDENTIALS_STRING_ENV);
@@ -604,6 +585,7 @@ public class ArtifactWagon extends AbstractHttpClientWagon {
    * Here we set retry strategy for internal http client. This workaround is used in order to avoid using
    * of 'maven.wagon.http.serviceUnavailableRetryStrategy.class' environment variable
    * That environment variable might lead to ClassNotFoundException with Maven 3.8.1
+   *
    * @see <a href="https://github.com/apache/maven-wagon/pull/57">WAGON-567</a>
    */
   private void setRetryStrategy() throws IllegalAccessException {
