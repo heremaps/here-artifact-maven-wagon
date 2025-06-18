@@ -28,7 +28,7 @@ jobs:
       env:
         GPG_KEY_NAME: ${{ secrets.GPG_KEY_NAME }}
         GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-        OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-        OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+        SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+        SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
         GPG_PRIVATE_KEY: ${{ secrets.GPG_KEY }}
       run: .github/scripts/deploy.sh
