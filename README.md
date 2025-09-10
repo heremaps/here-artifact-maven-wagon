@@ -20,7 +20,7 @@ Version numbers higher than specified are more likely to work properly.
     * MAC OSX 10
     * Linux (Ubuntu 16.04)
 * Java 17
-* Maven 3.9.X or later
+* Maven 3.9.0 or later
 
 ##  Prerequisites
 To access libraries and schemas from the HERE platform, you need a HERE Workspace and/or a HERE Marketplace account. If you don’t have an account yet, go to [Pricing and Plans](https://www.here.com/get-started/pricing) to apply for a free trial.
