@@ -41,8 +41,8 @@ public class XRateLimitServiceUnavailableRetryStrategyTest {
 
   @Before
   public void setup() {
-    httpResponse = mock(HttpResponse.class, Answers.RETURNS_DEEP_STUBS.get());
-    httpContext = mock(HttpContext.class, Answers.RETURNS_DEEP_STUBS.get());
+    httpResponse = mock(HttpResponse.class, Answers.RETURNS_DEEP_STUBS);
+    httpContext = mock(HttpContext.class, Answers.RETURNS_DEEP_STUBS);
     strategy = new XRateLimitServiceUnavailableRetryStrategy();
   }
 
