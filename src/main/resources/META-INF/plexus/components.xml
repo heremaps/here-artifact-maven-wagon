@@ -31,4 +31,5 @@
             <instantiation-strategy>per-lookup</instantiation-strategy>
         </component>
     </components>
+
 </component-set>
