@@ -18,6 +18,7 @@
  */
 package com.here.platform.artifact.maven.wagon.layout;
 
+import org.codehaus.plexus.component.annotations.Component;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.internal.impl.Maven2RepositoryLayoutFactory;
 import org.eclipse.aether.repository.RemoteRepository;
@@ -25,9 +26,7 @@ import org.eclipse.aether.spi.connector.layout.RepositoryLayout;
 import org.eclipse.aether.spi.connector.layout.RepositoryLayoutFactory;
 import org.eclipse.aether.transfer.NoRepositoryLayoutException;
 
-import javax.inject.Named;
-
-@Named("here")
+@Component(role = RepositoryLayoutFactory.class, hint = "here")
 public class HereRepositoryLayoutFactory implements RepositoryLayoutFactory {
 
   private final Maven2RepositoryLayoutFactory mavenLayoutFactory;

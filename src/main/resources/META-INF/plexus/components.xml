@@ -30,5 +30,12 @@
             <implementation>com.here.platform.artifact.maven.wagon.layout.HereArtifactRepositoryLayout</implementation>
             <instantiation-strategy>per-lookup</instantiation-strategy>
         </component>
+
+        <component>
+            <role>org.eclipse.aether.spi.connector.layout.RepositoryLayoutFactory</role>
+            <role-hint>here</role-hint>
+            <implementation>com.here.platform.artifact.maven.wagon.layout.HereRepositoryLayoutFactory</implementation>
+            <instantiation-strategy>per-lookup</instantiation-strategy>
+        </component>
     </components>
 </component-set>
