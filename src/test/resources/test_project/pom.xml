@@ -39,12 +39,6 @@
             <artifactId>sensoris-specification_v1_2_2_java</artifactId>
             <version>1.1.19</version>
         </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.11</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>

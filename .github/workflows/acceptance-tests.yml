@@ -48,7 +48,7 @@ jobs:
       - name: Run acceptance tests
         run: |
           mvn clean install
-          mvn clean test
+          mvn clean test -Pacceptance-tests
 
       - name: Upload test reports
         if: always()

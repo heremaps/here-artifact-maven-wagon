@@ -42,15 +42,15 @@ cd "$PROJECT_DIR"
 
 if [ "$MAVEN_VERSION" = "default" ]; then
     echo "Running tests with default Maven..."
-    mvn clean test
+    mvn clean test -Pacceptance-tests
 else
     echo "Running tests with Maven $MAVEN_VERSION..."
     if [ -d "$HOME/.m2/maven-$MAVEN_VERSION" ]; then
-        "$HOME/.m2/maven-$MAVEN_VERSION/bin/mvn" clean test
+        "$HOME/.m2/maven-$MAVEN_VERSION/bin/mvn" clean test -Pacceptance-tests
     else
         echo "Maven $MAVEN_VERSION not found at $HOME/.m2/maven-$MAVEN_VERSION"
         echo "Using default Maven..."
-        mvn clean test
+        mvn clean test -Pacceptance-tests
     fi
 fi
 
