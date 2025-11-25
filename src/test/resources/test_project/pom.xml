@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.test.archetype</groupId>
+    <artifactId>sample_archetype_project</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <name>sample_archetype_project</name>
+    <description>Sample project that demonstrates usage of HERE Artifact Maven Wagon</description>
+
+    <properties>
+        <java.version>17</java.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <artifact.wagon.version>2.0.0-SNAPSHOT</artifact.wagon.version>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>HERE_PLATFORM_ARTIFACT</id>
+            <layout>default</layout>
+            <url>here+artifact-service://artifact-service</url>
+        </repository>
+    </repositories>
+
+    <distributionManagement>
+        <repository>
+            <id>HERE_PLATFORM_ARTIFACT</id>
+            <url>here+artifact-service://artifact-service</url>
+        </repository>
+    </distributionManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.sensoris</groupId>
+            <artifactId>sensoris-specification_v1_2_2_java</artifactId>
+            <version>1.1.19</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <extensions>
+            <extension>
+                <groupId>com.here.platform.artifact</groupId>
+                <artifactId>artifact-wagon</artifactId>
+                <version>${artifact.wagon.version}</version>
+            </extension>
+        </extensions>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

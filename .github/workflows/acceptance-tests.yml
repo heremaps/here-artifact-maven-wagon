@@ -1,0 +1,93 @@
+name: Acceptance Tests
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  acceptance-tests:
+    name: Acceptance Tests - Java ${{ matrix.java }} - Maven ${{ matrix.maven }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        java: ['17']
+        maven: ['3.9.0', '3.9.11']
+      fail-fast: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ matrix.java }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.java }}
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Set up Maven ${{ matrix.maven }}
+        uses: stCarolas/setup-maven@v4.5
+        with:
+          maven-version: ${{ matrix.maven }}
+
+      - name: Verify Java and Maven versions
+        run: |
+          echo "Java version:"
+          java -version
+          echo "Maven version:"
+          mvn -version
+
+      - name: Configure HERE credentials
+        env:
+          OLP_CREDENTIALS: ${{ secrets.OLP_CREDENTIALS }}
+        run: mkdir -p ~/.here/ && echo $OLP_CREDENTIALS | base64 --decode > ~/.here/credentials.properties
+
+      - name: Run acceptance tests
+        run: |
+          mvn clean install
+          mvn clean test -Pacceptance-tests
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cucumber-reports-java${{ matrix.java }}-maven${{ matrix.maven }}
+          path: target/cucumber-reports/
+          retention-days: 30
+
+      - name: Upload surefire reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-reports-java${{ matrix.java }}-maven${{ matrix.maven }}
+          path: target/surefire-reports/
+          retention-days: 30
+
+      - name: Publish test results
+        if: always()
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          files: |
+            target/cucumber-reports/cucumber.xml
+            target/surefire-reports/*.xml
+          check_name: Test Results - Java ${{ matrix.java }} - Maven ${{ matrix.maven }}
+
+  acceptance-tests-summary:
+    name: Acceptance Tests Summary
+    needs: acceptance-tests
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: Check test results
+        run: |
+          if [ "${{ needs.acceptance-tests.result }}" = "success" ]; then
+            echo "All acceptance tests passed!"
+          else
+            echo "Some acceptance tests failed"
+            exit 1
+          fi
+
