@@ -2,7 +2,7 @@ name: Acceptance Tests
 
 on:
   push:
-    branches: [ master, SDKJAVA-526-integration-tests ]
+    branches: [ master ]
   pull_request:
     branches: [ master ]
 
