@@ -43,7 +43,9 @@ jobs:
       - name: Configure HERE credentials
         env:
           OLP_CREDENTIALS: ${{ secrets.OLP_CREDENTIALS }}
-        run: mkdir -p ~/.here/ && echo $OLP_CREDENTIALS | base64 --decode > ~/.here/credentials.properties
+        run: |
+          echo $OLP_CREDENTIALS
+          mkdir -p ~/.here/ && echo $OLP_CREDENTIALS | base64 --decode > ~/.here/credentials.properties
 
       - name: Run acceptance tests
         run: |
