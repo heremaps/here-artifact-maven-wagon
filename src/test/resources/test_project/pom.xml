@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.test.archetype</groupId>
-    <artifactId>sample_archetype_project</artifactId>
+    <artifactId>sample_archetype_project-${maven.build.timestamp}</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <name>sample_archetype_project</name>
     <description>Sample project that demonstrates usage of HERE Artifact Maven Wagon</description>
@@ -16,6 +16,7 @@
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <artifact.wagon.version>2.0.0-SNAPSHOT</artifact.wagon.version>
+        <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
     </properties>
 
     <repositories>
