@@ -19,7 +19,7 @@ Version numbers higher than specified are more likely to work properly.
     * Windows 10
     * MAC OSX 10
     * Linux (Ubuntu 16.04)
-* Java 17
+* Java 21
 * Maven 3.9.0 or later
 
 ##  Prerequisites
@@ -163,6 +163,6 @@ settings in the Maven settings file (`settings.xml`), which is normally located 
 ```
 
 ## License
-Copyright (C) 2018-2025 HERE Europe B.V.
+Copyright (C) 2018-2026 HERE Europe B.V.
 
 Unless otherwise noted in `LICENSE` files for specific files or directories, the [LICENSE](LICENSE) in the root applies to all content in this repository.

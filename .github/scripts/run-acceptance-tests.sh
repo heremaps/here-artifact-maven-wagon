@@ -8,7 +8,7 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
-JAVA_VERSION=${1:-"17"}
+JAVA_VERSION=${1:-"21"}
 MAVEN_VERSION=${2:-"default"}
 
 echo "============================================"
@@ -28,6 +28,10 @@ if command -v sdk &> /dev/null; then
         17)
             sdk use java 17.0.9-tem 2>/dev/null || echo "Java 17 not available via SDKMAN, using system default"
             ;;
+        21)
+          sdk use java 21-tem 2>/dev/null ||
+            echo "Java 21 not available via SDKMAN, using system default"
+          ;;
     esac
 fi
 
