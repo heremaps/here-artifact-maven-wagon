@@ -42,6 +42,29 @@ here.token.endpoint.url=...
 ```
 Note that providing credentials via `HERE_CREDENTIALS_STRING` variable have the lowest precedence
 
+### OAuth 2.1 `private_key_jwt` (JWK) authentication
+Besides access key credentials, the plugin supports OAuth 2.1 client authentication with JWT client assertions
+(`private_key_jwt`, [RFC 7523](https://www.rfc-editor.org/rfc/rfc7523#section-2.2)). The plugin signs a short-lived JWT
+with your RSA private key, and the matching public key must be registered with HERE Account as a JWK.
+
+To register a JWK refer to the [Using OAuth 2.1 in the HERE Platform](https://docs.here.com/identity-and-access-management/docs/how-to-authorize-with-oauth-21).
+To enable it, set `here.auth.method=private_key_jwt` in the credentials provided via any of the options above:
+```
+here.token.endpoint.url=https://account.api.here.com/oauth2/token
+here.auth.method=private_key_jwt
+here.client.id=...
+here.private.key=/full/path/to/private-key.pem
+here.key.id=...
+here.signing.algorithm=RS256
+```
+- `here.private.key` - the PKCS#8 PEM-encoded RSA private key, either as a file path or as the key content itself.
+  `HERE_CREDENTIALS_STRING` is parsed line by line, so there use a file path or the single-line base64 key body
+  without the `-----BEGIN/END PRIVATE KEY-----` lines.
+- `here.key.id` - optional, the key ID (`kid`) of the registered JWK.
+- `here.signing.algorithm` - optional, defaults to `RS256`, which is currently the only supported algorithm.
+
+If `here.auth.method` is not set, the access key credentials (`here.access.key.id` and `here.access.key.secret`) are used.
+
 ## How to use it?
 This Maven Wagon plugin is published on [Maven Central](https://search.maven.org/artifact/com.here.platform.artifact/artifact-wagon) so you can conveniently use it from your Maven POM.
 
