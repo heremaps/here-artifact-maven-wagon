@@ -21,13 +21,15 @@ package com.here.platform.artifact.maven.wagon;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.here.account.auth.JwtClientAssertionProvider;
 import com.here.account.auth.OAuth1ClientCredentialsProvider;
 import com.here.account.http.HttpProvider;
 import com.here.account.http.apache.ApacheHttpClientProvider;
 import com.here.account.oauth2.ClientAuthorizationRequestProvider;
-import com.here.account.oauth2.ClientCredentialsGrantRequest;
+import com.here.account.oauth2.HereAccessTokenProvider;
 import com.here.account.oauth2.HereAccount;
 import com.here.account.oauth2.TokenEndpoint;
+import com.here.account.util.SettableSystemClock;
 import com.here.platform.artifact.maven.wagon.model.RegisterRequest;
 import com.here.platform.artifact.maven.wagon.model.RegisterResponse;
 import com.here.platform.artifact.maven.wagon.model.ServiceExceptionResponse;
@@ -451,14 +453,46 @@ public class ArtifactWagon extends AbstractHttpClientWagon {
         throw new IllegalArgumentException(
             String.format("No %s property specified", HERE_ENDPOINT_URL_KEY));
       }
-      ClientAuthorizationRequestProvider credentialsProvider =
-          new OAuth1ClientCredentialsProvider.FromProperties(properties);
+      ClientAuthorizationRequestProvider credentialsProvider = createClientAuthorizationRequestProvider(properties);
       HttpProvider httpProvider = createHttpProvider(endpointUrl);
       TokenEndpoint tokenEndpoint = HereAccount.getTokenEndpoint(httpProvider, credentialsProvider);
-      return tokenEndpoint.requestToken(new ClientCredentialsGrantRequest()).getAccessToken();
+      return tokenEndpoint
+          .requestToken(credentialsProvider.getNewAccessTokenRequest())
+          .getAccessToken();
     } catch (Exception exp) {
       throw new HereAuthenticationException("Error authenticating HERE credentials", exp);
     }
+  }
+
+  /**
+   * Select the HERE Account client authentication method based on the credentials properties:
+   *
+   * <ul>
+   *   <li>OAuth 2.1 {@code private_key_jwt} (RFC 7523) when {@code here.auth.method=private_key_jwt}
+   *   <li>OAuth 2.0 client credentials (access key id / secret) otherwise
+   * </ul>
+   *
+   * @param properties the HERE credentials properties
+   * @return the provider used to authenticate token requests
+   */
+  static ClientAuthorizationRequestProvider createClientAuthorizationRequestProvider(
+      Properties properties) {
+    String authMethod = properties.getProperty(JwtClientAssertionProvider.AUTH_METHOD_PROPERTY);
+    if (JwtClientAssertionProvider.AUTH_METHOD_PRIVATE_KEY_JWT.equals(authMethod)) {
+      if (!JwtClientAssertionProvider.isPrivateKeyJwtConfigured(properties)) {
+        throw new IllegalArgumentException(
+            String.format(
+                "%s=%s requires the %s and %s properties",
+                JwtClientAssertionProvider.AUTH_METHOD_PROPERTY,
+                JwtClientAssertionProvider.AUTH_METHOD_PRIVATE_KEY_JWT,
+                JwtClientAssertionProvider.CLIENT_ID_PROPERTY,
+                JwtClientAssertionProvider.PRIVATE_KEY_PROPERTY));
+      }
+      LOG.debug("Using OAuth 2.1 private_key_jwt client authentication");
+      return new JwtClientAssertionProvider(new SettableSystemClock(), properties);
+    }
+    LOG.debug("Using OAuth 2.0 client credentials authentication");
+    return new OAuth1ClientCredentialsProvider.FromProperties(properties);
   }
 
   /**
@@ -475,7 +509,9 @@ public class ArtifactWagon extends AbstractHttpClientWagon {
     String credentialsString = System.getenv(HERE_CREDENTIALS_STRING_ENV);
     if (properties.isEmpty() && !isEmpty(credentialsString)) {
       loadCredentialsFromString(properties, credentialsString);
-    } else {
+    }
+    // the default file is only a fallback: loading it on top would override the explicitly provided credentials
+    if (properties.isEmpty()) {
       loadCredentialsFromFile(properties, new File(System.getProperty("user.home"), HERE_CREDENTIALS_PATH));
     }
     return properties;
