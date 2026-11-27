@@ -133,7 +133,7 @@ public class ArtifactWagon extends AbstractHttpClientWagon {
   }
 
   String getDefaultArtifactServiceUrl() {
-    String hereTokenEndpointUrl = this.hereProperties.getProperty(HERE_ENDPOINT_URL_KEY);
+    String hereTokenEndpointUrl = requireTokenEndpointUrl(this.hereProperties);
     ArtifactServiceUrlResolverChain artifactServiceUrlResolverChain = new ArtifactServiceUrlResolverChain(this::createProxyAwareHttpClient, objectMapper);
     String artifactServiceUrl = artifactServiceUrlResolverChain.resolveArtifactServiceUrl(hereTokenEndpointUrl);
     if (StringUtils.isEmpty(artifactServiceUrl)) {
@@ -448,11 +448,7 @@ public class ArtifactWagon extends AbstractHttpClientWagon {
     LOG.trace("Attempting to authenticate with HERE Account");
 
     try {
-      String endpointUrl = properties.getProperty(HERE_ENDPOINT_URL_KEY);
-      if (endpointUrl == null) {
-        throw new IllegalArgumentException(
-            String.format("No %s property specified", HERE_ENDPOINT_URL_KEY));
-      }
+      String endpointUrl = requireTokenEndpointUrl(properties);
       ClientAuthorizationRequestProvider credentialsProvider = createClientAuthorizationRequestProvider(properties);
       HttpProvider httpProvider = createHttpProvider(endpointUrl);
       TokenEndpoint tokenEndpoint = HereAccount.getTokenEndpoint(httpProvider, credentialsProvider);
@@ -493,6 +489,17 @@ public class ArtifactWagon extends AbstractHttpClientWagon {
     }
     LOG.debug("Using OAuth 2.0 client credentials authentication");
     return new OAuth1ClientCredentialsProvider.FromProperties(properties);
+  }
+
+  private static String requireTokenEndpointUrl(Properties properties) {
+    String endpointUrl = properties.getProperty(HERE_ENDPOINT_URL_KEY);
+    if (isEmpty(endpointUrl)) {
+      throw new HereAuthenticationException(
+          String.format(
+              "Invalid HERE credentials: missing required property %s.", HERE_ENDPOINT_URL_KEY),
+          null);
+    }
+    return endpointUrl;
   }
 
   /**
