@@ -152,6 +152,21 @@ public class ArtifactWagonAuthenticationTest {
   }
 
   @Test
+  public void testMissingTokenEndpointUrlReported() throws Exception {
+    Properties properties = oauth1Properties();
+    properties.remove("here.token.endpoint.url");
+    ArtifactWagon wagon = wagonWith(properties);
+
+    HereAuthenticationException exception =
+        assertThrows(
+            HereAuthenticationException.class, () -> wagon.setHeaders(new HttpGet("http://localhost/")));
+    assertTrue(exception.getCause().getMessage().contains("here.token.endpoint.url"));
+    exception = assertThrows(HereAuthenticationException.class, wagon::getDefaultArtifactServiceUrl);
+    assertTrue(exception.getMessage().contains("here.token.endpoint.url"));
+    assertTrue(tokenRequests.isEmpty());
+  }
+
+  @Test
   public void testBearerTokenMintedWithPrivateKeyJwtFromKeyFile() throws Exception {
     File keyFile = temporaryFolder.newFile("private-key.pem");
     Files.write(keyFile.toPath(), pemPrivateKey().getBytes(StandardCharsets.US_ASCII));
